@@ -651,7 +651,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
 
         //Restore Subscribed Item
         try {
-            if (!functionsClass.removeAdsPurchased() && functionsClass.networkConnection()) {
+            if (functionsClass.networkConnection()) {
                 BillingClient billingClient = BillingClient.newBuilder(CategoryHandler.this).setListener(new PurchasesUpdatedListener() {
                     @Override
                     public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {

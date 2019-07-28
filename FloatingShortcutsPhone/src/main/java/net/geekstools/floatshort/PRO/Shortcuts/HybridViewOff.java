@@ -674,7 +674,7 @@ public class HybridViewOff extends Activity implements View.OnClickListener, Vie
 
         //Restore Subscribed Item
         try {
-            if (!functionsClass.removeAdsPurchased() && functionsClass.networkConnection()) {
+            if (functionsClass.networkConnection()) {
                 BillingClient billingClient = BillingClient.newBuilder(HybridViewOff.this).setListener(new PurchasesUpdatedListener() {
                     @Override
                     public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {

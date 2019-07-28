@@ -14,8 +14,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 28
 
-        versionCode 644
-        versionName "14.500.500.644_"
+        versionCode 646
+        versionName "14.500.500.646_"
 
         wearAppUnbundled true
     }
@@ -78,7 +78,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:19.0.1'
     implementation 'com.google.firebase:firebase-config:18.0.0'
     implementation 'com.google.firebase:firebase-auth:18.1.0'
-    implementation 'com.google.firebase:firebase-storage:18.1.0'
+    implementation 'com.google.firebase:firebase-storage:18.1.1'
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
@@ -92,7 +92,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
 
     /*FREE*/
-    implementation 'com.google.firebase:firebase-ads:18.1.0'
+    implementation 'com.google.firebase:firebase-ads:18.1.1'
     /*FREE*/
 }
 apply plugin: 'com.google.gms.google-services'
