@@ -141,6 +141,11 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         super.onCreate(bundle);
         setContentView(R.layout.widget_configurations_views);
 
+        /*
+         * CHECK Duplicated Call on FunctionsClass (Activity Instance)
+         * */
+
+
         functionsClass = new FunctionsClass(getApplicationContext(), WidgetConfigurations.this);
 
         wholeWidget = (RelativeLayout) findViewById(R.id.wholeWidget);
@@ -832,6 +837,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
     @Override
     public void onResume() {
         super.onResume();
+        PublicVariable.eligibleShowAds = true;
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         firebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
@@ -864,6 +870,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
     @Override
     public void onPause() {
         super.onPause();
+        PublicVariable.eligibleShowAds = false;
+
         if (PublicVariable.actionCenter == true) {
             functionsClass.closeActionMenuOption(fullActionViews, actionButton);
         }

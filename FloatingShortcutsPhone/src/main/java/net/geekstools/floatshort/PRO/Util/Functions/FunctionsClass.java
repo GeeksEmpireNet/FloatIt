@@ -170,6 +170,7 @@ import net.geekstools.floatshort.PRO.Util.UI.FloatingSplash;
 import net.geekstools.floatshort.PRO.Util.UI.PopupOptionsFloatingCategory;
 import net.geekstools.floatshort.PRO.Util.UI.PopupOptionsFloatingShortcuts;
 import net.geekstools.floatshort.PRO.Widget.RoomDatabase.WidgetDataInterface;
+import net.geekstools.floatshort.PRO.Widget.WidgetConfigurations;
 import net.geekstools.floatshort.PRO.Widget_Unlimited_Floating;
 import net.geekstools.imageview.customshapes.ShapesImage;
 
@@ -206,11 +207,15 @@ public class FunctionsClass {
     Context context;
     ArrayList<NavDrawerItem> navDrawerItems;
 
-
     /*Free Functions*/
     FirebaseRemoteConfig firebaseRemoteConfig;
 
-    InterstitialAd interstitialAdApps, interstitialAdSettingsGUI;
+    public static InterstitialAd interstitialAdApps, interstitialAdWidgetShortcuts,
+            interstitialAdSettingsGUI;
+
+    public static String packageNameWidget, shortcutNameWidget;
+    public static Drawable widgetPreviewDrawable;
+    public static int shortcutIdWidget;
 
     public FunctionsClass(final Context context, final Activity activity) {
         this.context = context;
@@ -221,6 +226,7 @@ public class FunctionsClass {
         checkLightDarkTheme();
 
         String ClassName = activity.getComponentName().getClassName();
+
         if (ClassName.contains(HybridViewOff.class.getSimpleName())
                 || ClassName.contains(CategoryHandler.class.getSimpleName())
                 || ClassName.contains(Configurations.class.getSimpleName())
@@ -231,6 +237,7 @@ public class FunctionsClass {
                     adBlockerDetection(activity);
                 }
 
+                FunctionsClassDebug.Companion.PrintDebug("*** ClassName == " + ClassName + " ***");
                 MobileAds.initialize(context, context.getString(R.string.AdAppId));
                 final AdRequest adRequestinterstitialAd = new AdRequest.Builder()
                         .addTestDevice("CDCAA1F20B5C9C948119E886B31681DE")
@@ -243,16 +250,12 @@ public class FunctionsClass {
                 interstitialAdApps = new InterstitialAd(context);
                 interstitialAdApps.setImmersiveMode(true);
                 interstitialAdApps.setAdUnitId(context.getString(R.string.AdUnitActivities));
-                if (interstitialAdApps.isLoaded()) {
-                    interstitialAdApps.show();
-                } else {
-                    interstitialAdApps.loadAd(adRequestinterstitialAd);
-                }
+                interstitialAdApps.loadAd(adRequestinterstitialAd);
                 interstitialAdApps.setAdListener(new AdListener() {
                     @Override
                     public void onAdLoaded() {
                         if (BuildConfig.DEBUG) {
-                            System.out.println("*** InterstitialAd Loaded ***");
+                            System.out.println("*** InterstitialAd Loaded | Activities ***");
                         }
                         PublicVariable.interstitialAdLoaded = true;
 
@@ -264,7 +267,7 @@ public class FunctionsClass {
                     @Override
                     public void onAdFailedToLoad(int errorCodeAdRequest) {
                         if (BuildConfig.DEBUG) {
-                            System.out.println("*** AdFailedToLoad " + errorCodeAdRequest + " ***");
+                            System.out.println("*** AdFailedToLoad " + errorCodeAdRequest + " | Activities ***");
                         }
                         interstitialAdApps.loadAd(adRequestinterstitialAd);
                     }
@@ -314,7 +317,9 @@ public class FunctionsClass {
                     }
                 });
             }
-        } else if (ClassName.contains(SettingGUILight.class.getSimpleName())
+        }
+
+        if (ClassName.contains(SettingGUILight.class.getSimpleName())
                 || ClassName.contains(SettingGUIDark.class.getSimpleName())) {
             final PreferenceActivity preferenceActivity = ((PreferenceActivity) activity);
 
@@ -359,7 +364,9 @@ public class FunctionsClass {
                     });
 
             if (LoadAds()) {
+                FunctionsClassDebug.Companion.PrintDebug("*** ClassName == " + ClassName + " ***");
                 MobileAds.initialize(context, context.getString(R.string.AdAppId));
+
                 interstitialAdSettingsGUI = new InterstitialAd(context);
                 final AdRequest adRequestinterstitialAd = new AdRequest.Builder()
                         .addTestDevice("CDCAA1F20B5C9C948119E886B31681DE")
@@ -376,13 +383,16 @@ public class FunctionsClass {
                     @Override
                     public void onAdLoaded() {
                         if (BuildConfig.DEBUG) {
-                            System.out.println("*** InterstitialAd Loaded ***");
+                            System.out.println("*** InterstitialAd Loaded | SettingGUI ***");
                         }
                         PublicVariable.interstitialAdLoaded = true;
                     }
 
                     @Override
                     public void onAdFailedToLoad(int errorCodeAdRequest) {
+                        if (BuildConfig.DEBUG) {
+                            System.out.println("*** AdFailedToLoad " + errorCodeAdRequest + " | SettingGUI ***");
+                        }
                         interstitialAdSettingsGUI.loadAd(adRequestinterstitialAd);
                     }
 
@@ -407,6 +417,66 @@ public class FunctionsClass {
                     }
                 });
             }
+        }
+
+        if (ClassName.contains(WidgetConfigurations.class.getSimpleName())) {
+            FunctionsClassDebug.Companion.PrintDebug("*** ClassName == " + ClassName + " ***");
+            MobileAds.initialize(context, context.getString(R.string.AdAppId));
+
+            final AdRequest adRequestinterstitialAd = new AdRequest.Builder()
+                    .addTestDevice("CDCAA1F20B5C9C948119E886B31681DE")
+                    .addTestDevice("D101234A6C1CF51023EE5815ABC285BD")
+                    .addTestDevice("65B5827710CBE90F4A99CE63099E524C")
+                    .addTestDevice("5901E5EE74F9B6652E05621140664A54")
+                    .addTestDevice("DD428143B4772EC7AA87D1E2F9DA787C")
+                    .addTestDevice("F54D998BCE077711A17272B899B44798")
+                    .build();
+            interstitialAdWidgetShortcuts = new InterstitialAd(context);
+            interstitialAdWidgetShortcuts.setImmersiveMode(true);
+            interstitialAdWidgetShortcuts.setAdUnitId(context.getString(R.string.AdUnitFloatingWidgetShortcuts));
+            interstitialAdWidgetShortcuts.loadAd(adRequestinterstitialAd);
+            interstitialAdWidgetShortcuts.setAdListener(new AdListener() {
+                @Override
+                public void onAdLoaded() {
+                    if (BuildConfig.DEBUG) {
+                        System.out.println("*** InterstitialAd Loaded | WidgetConfigurations ***");
+                    }
+                }
+
+                @Override
+                public void onAdFailedToLoad(int errorCodeAdRequest) {
+                    if (BuildConfig.DEBUG) {
+                        System.out.println("*** AdFailedToLoad " + errorCodeAdRequest + " | WidgetConfigurations ***");
+                    }
+                    interstitialAdWidgetShortcuts.loadAd(adRequestinterstitialAd);
+                }
+
+                @Override
+                public void onAdOpened() {
+
+                }
+
+                @Override
+                public void onAdLeftApplication() {
+
+                }
+
+                @Override
+                public void onAdClosed() {
+                    interstitialAdWidgetShortcuts.loadAd(adRequestinterstitialAd);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageNameWidget, shortcutNameWidget, widgetPreviewDrawable, shortcutIdWidget);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, 555);
+                }
+            });
         }
     }
 
@@ -4532,28 +4602,37 @@ public class FunctionsClass {
         Drawable popupItemIcon = returnAPI() >= 28 ? resizeDrawable(context.getDrawable(R.drawable.w_pref_popup), 100, 100) : context.getDrawable(R.drawable.w_pref_popup);
         popupItemIcon.setTint(extractVibrantColor(appIcon(packageName)));
 
-        for (int itemId = 0; itemId < menuItems.length; itemId++) {
-            popupMenu.getMenu()
-                    .add(Menu.NONE, itemId, itemId, Html.fromHtml("<font color='" + PublicVariable.colorLightDarkOpposite + "'>" + menuItems[itemId] + "</font>"))
-                    .setIcon(popupItemIcon);
-        }
-
-        try {
-            Field[] fields = popupMenu.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                if ("mPopup".equals(field.getName())) {
-                    field.setAccessible(true);
-                    Object menuPopupHelper = field.get(popupMenu);
-                    Class<?> classPopupHelper = Class.forName(menuPopupHelper
-                            .getClass().getName());
-                    Method setForceIcons = classPopupHelper.getMethod(
-                            "setForceShowIcon", boolean.class);
-                    setForceIcons.invoke(menuPopupHelper, true);
-                    break;
-                }
+        if (interstitialAdWidgetShortcuts.isLoaded()) {
+            for (int itemId = 0; itemId < menuItems.length; itemId++) {
+                popupMenu.getMenu()
+                        .add(Menu.NONE, itemId, itemId,
+                                Html.fromHtml("<font color='" + PublicVariable.colorLightDarkOpposite + "'>" + menuItems[itemId] + (interstitialAdWidgetShortcuts.isLoaded() ? " 📺 " : "") + "</font>"));
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
+        } else {
+            for (int itemId = 0; itemId < menuItems.length; itemId++) {
+                popupMenu.getMenu()
+                        .add(Menu.NONE, itemId, itemId,
+                                Html.fromHtml("<font color='" + PublicVariable.colorLightDarkOpposite + "'>" + menuItems[itemId] + "</font>"))
+                        .setIcon(popupItemIcon);
+            }
+
+            try {
+                Field[] fields = popupMenu.getClass().getDeclaredFields();
+                for (Field field : fields) {
+                    if ("mPopup".equals(field.getName())) {
+                        field.setAccessible(true);
+                        Object menuPopupHelper = field.get(popupMenu);
+                        Class<?> classPopupHelper = Class.forName(menuPopupHelper
+                                .getClass().getName());
+                        Method setForceIcons = classPopupHelper.getMethod(
+                                "setForceShowIcon", boolean.class);
+                        setForceIcons.invoke(menuPopupHelper, true);
+                        break;
+                    }
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
         }
 
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -4629,10 +4708,19 @@ public class FunctionsClass {
                         break;
                     }
                     case 2: {
-                        try {
-                            widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageName, widgetLabel, widgetPreview, appWidgetId);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if (PublicVariable.eligibleShowAds && interstitialAdWidgetShortcuts.isLoaded()) {
+                            packageNameWidget = packageName;
+                            shortcutNameWidget = widgetLabel;
+                            widgetPreviewDrawable = widgetPreview;
+                            shortcutIdWidget = appWidgetId;
+                            interstitialAdWidgetShortcuts.show();
+                        } else {
+                            try {
+
+                                widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageName, widgetLabel, widgetPreview, appWidgetId);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         break;
@@ -4855,6 +4943,8 @@ public class FunctionsClass {
     }
 
     public void widgetToHomeScreen(Class className, String packageName, String shortcutName, Drawable widgetPreviewDrawable, int shortcutId) throws Exception {
+        FunctionsClassDebug.Companion.PrintDebug("*** Widget To Home Screen ***");
+
         Intent differentIntent = new Intent(context, className);
         differentIntent.setAction("CREATE_FLOATING_WIDGET_HOME_SCREEN_SHORTCUTS");
         differentIntent.addCategory(Intent.CATEGORY_DEFAULT);

@@ -21,6 +21,7 @@
     <string name="AdUnitActivities" translatable="false">ca-app-pub-2920235108594210/1750751487</string>
     <string name="AdUnitSettingGUI" translatable="false">ca-app-pub-2920235108594210/9496182194</string>
     <string name="AdUnitReward" translatable="false">ca-app-pub-2920235108594210/2451118698</string>
+    <string name="AdUnitFloatingWidgetShortcuts" translatable="false">ca-app-pub-2920235108594210/9201590100</string>
     <string name="ads_title" translatable="false">
         <![CDATA[
             <b>Advertising Blocker Found</b>
