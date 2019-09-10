@@ -1067,32 +1067,28 @@ public class SettingGUIDark extends PreferenceActivity implements OnSharedPrefer
     @Override
     public void onBackPressed() {
         try {
-            if (PublicVariable.interstitialAdLoaded) {
-                functionsClass.ShowAds(FunctionsClass.InterstitialAdPlace.SettingGUI);
+            if (FromWidgetsConfigurations) {
+                Intent intent = new Intent(getApplicationContext(), WidgetConfigurations.class);
+                startActivity(intent);
             } else {
-                if (FromWidgetsConfigurations) {
-                    Intent intent = new Intent(getApplicationContext(), WidgetConfigurations.class);
-                    startActivity(intent);
-                } else {
-                    if (PublicVariable.forceReload) {
-                        PublicVariable.forceReload = false;
-                        functionsClass.overrideBackPressToMain(SettingGUIDark.this);
-                    }
+                if (PublicVariable.forceReload) {
+                    PublicVariable.forceReload = false;
+                    functionsClass.overrideBackPressToMain(SettingGUIDark.this);
                 }
-
-                float finalRadius = (int) Math.hypot(functionsClass.displayX(), functionsClass.displayY());
-                Animator circularReveal = ViewAnimationUtils.createCircularReveal(
-                        rootLayout, (functionsClass.displayX() / 2), (functionsClass.displayY() / 2), finalRadius, 0);
-
-                circularReveal.setDuration(213);
-                circularReveal.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        rootLayout.setVisibility(View.INVISIBLE);
-                    }
-                });
-                circularReveal.start();
             }
+
+            float finalRadius = (int) Math.hypot(functionsClass.displayX(), functionsClass.displayY());
+            Animator circularReveal = ViewAnimationUtils.createCircularReveal(
+                    rootLayout, (functionsClass.displayX() / 2), (functionsClass.displayY() / 2), finalRadius, 0);
+
+            circularReveal.setDuration(213);
+            circularReveal.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    rootLayout.setVisibility(View.INVISIBLE);
+                }
+            });
+            circularReveal.start();
         } catch (Exception e) {
             e.printStackTrace();
         }

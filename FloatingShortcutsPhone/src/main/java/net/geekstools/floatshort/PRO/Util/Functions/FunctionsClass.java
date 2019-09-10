@@ -444,6 +444,7 @@ public class FunctionsClass {
                     if (BuildConfig.DEBUG) {
                         System.out.println("*** InterstitialAd Loaded | WidgetConfigurations ***");
                     }
+                    context.sendBroadcast(new Intent("SHOW_ADS_ICON_FORCE_RELOAD"));
                 }
 
                 @Override
@@ -456,7 +457,7 @@ public class FunctionsClass {
 
                 @Override
                 public void onAdOpened() {
-
+                    context.sendBroadcast(new Intent("HIDE_ADS_ICON_FORCE_RELOAD"));
                 }
 
                 @Override

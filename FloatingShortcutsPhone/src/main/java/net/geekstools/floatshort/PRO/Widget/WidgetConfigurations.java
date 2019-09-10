@@ -655,6 +655,10 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("FORCE_RELOAD");
+        /*Free Functions*/
+        intentFilter.addAction("SHOW_ADS_ICON_FORCE_RELOAD");
+        intentFilter.addAction("HIDE_ADS_ICON_FORCE_RELOAD");
+        /*Free Functions*/
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -669,6 +673,15 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     LoadConfiguredWidgets loadConfiguredWidgets = new LoadConfiguredWidgets();
                     loadConfiguredWidgets.execute();
                 }
+                /*Free Functions*/
+                else if (intent.getAction().equals("SHOW_ADS_ICON_FORCE_RELOAD")) {
+                    LoadConfiguredWidgetsWithShowAdsIcon loadConfiguredWidgetsWithShowAdsIcon = new LoadConfiguredWidgetsWithShowAdsIcon();
+                    loadConfiguredWidgetsWithShowAdsIcon.execute();
+                } else if (intent.getAction().equals("HIDE_ADS_ICON_FORCE_RELOAD")) {
+                    LoadConfiguredWidgetsWithHideAdsIcon loadConfiguredWidgetsWithHideAdsIcon = new LoadConfiguredWidgetsWithHideAdsIcon();
+                    loadConfiguredWidgetsWithHideAdsIcon.execute();
+                }
+                /*Free Functions*/
             }
         };
         registerReceiver(broadcastReceiver, intentFilter);
@@ -1671,6 +1684,219 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
             }, 700);
         }
     }
+
+
+    /*Free Functions*/
+    public class LoadConfiguredWidgetsWithShowAdsIcon extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                configuredWidgetsNavDrawerItems.clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            configuredWidgetsNavDrawerItems.clear();
+
+            configuredWidgetAvailable = false;
+            try {
+                if (functionsClass.loadCustomIcons()) {
+                    loadCustomIcons.load();
+                    FunctionsClass.println("*** Total Custom Icon ::: " + loadCustomIcons.getTotalIcons());
+                }
+
+                WidgetDataInterface widgetDataInterface = Room.databaseBuilder(getApplicationContext(), WidgetDataInterface.class, PublicVariable.WIDGET_DATA_DATABASE_NAME)
+                        .fallbackToDestructiveMigration()
+                        .addCallback(new RoomDatabase.Callback() {
+                            @Override
+                            public void onCreate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+                                super.onCreate(supportSQLiteDatabase);
+                            }
+
+                            @Override
+                            public void onOpen(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+                                super.onOpen(supportSQLiteDatabase);
+
+                            }
+                        })
+                        .build();
+
+                List<WidgetDataModel> widgetDataModels = widgetDataInterface.initDataAccessObject().getAllWidgetData();
+
+                String oldAppName = "";
+                int widgetIndex = 0;
+                for (WidgetDataModel widgetDataModel : widgetDataModels) {
+                    try {
+                        int appWidgetId = widgetDataModel.getWidgetId();
+                        String packageName = widgetDataModel.getPackageName();
+
+                        if (functionsClass.appIsInstalled(packageName)) {
+                            AppWidgetProviderInfo appWidgetProviderInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
+                            String newAppName = functionsClass.appName(packageName);
+                            Drawable appIcon = functionsClass.loadCustomIcons() ? loadCustomIcons.getDrawableIconForPackage(packageName, functionsClass.shapedAppIcon(packageName)) : functionsClass.shapedAppIcon(packageName);
+
+                            if (widgetIndex == 0) {
+                                configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
+                                indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
+                            } else {
+                                if (!oldAppName.equals(newAppName)) {
+                                    configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
+                                    indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
+                                }
+                            }
+
+                            oldAppName = functionsClass.appName(packageName);
+
+                            indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
+                            configuredWidgetsNavDrawerItems.add(new NavDrawerItem(
+                                    newAppName,
+                                    packageName,
+                                    " 📺 " + widgetDataModel.getWidgetLabel(),
+                                    appIcon,
+                                    appWidgetProviderInfo,
+                                    appWidgetId,
+                                    widgetDataModel.getRecovery()
+                            ));
+
+                            widgetIndex++;
+                        } else {
+                            widgetDataInterface.initDataAccessObject().deleteByWidgetId(appWidgetId);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                widgetDataInterface.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            try {
+                configuredWidgetsRecyclerViewAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public class LoadConfiguredWidgetsWithHideAdsIcon extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                configuredWidgetsNavDrawerItems.clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            configuredWidgetsNavDrawerItems.clear();
+
+            configuredWidgetAvailable = false;
+            try {
+                if (functionsClass.loadCustomIcons()) {
+                    loadCustomIcons.load();
+                    FunctionsClass.println("*** Total Custom Icon ::: " + loadCustomIcons.getTotalIcons());
+                }
+
+                WidgetDataInterface widgetDataInterface = Room.databaseBuilder(getApplicationContext(), WidgetDataInterface.class, PublicVariable.WIDGET_DATA_DATABASE_NAME)
+                        .fallbackToDestructiveMigration()
+                        .addCallback(new RoomDatabase.Callback() {
+                            @Override
+                            public void onCreate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+                                super.onCreate(supportSQLiteDatabase);
+                            }
+
+                            @Override
+                            public void onOpen(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
+                                super.onOpen(supportSQLiteDatabase);
+
+                            }
+                        })
+                        .build();
+
+                List<WidgetDataModel> widgetDataModels = widgetDataInterface.initDataAccessObject().getAllWidgetData();
+
+                String oldAppName = "";
+                int widgetIndex = 0;
+                for (WidgetDataModel widgetDataModel : widgetDataModels) {
+                    try {
+                        int appWidgetId = widgetDataModel.getWidgetId();
+                        String packageName = widgetDataModel.getPackageName();
+
+                        if (functionsClass.appIsInstalled(packageName)) {
+                            AppWidgetProviderInfo appWidgetProviderInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
+                            String newAppName = functionsClass.appName(packageName);
+                            Drawable appIcon = functionsClass.loadCustomIcons() ? loadCustomIcons.getDrawableIconForPackage(packageName, functionsClass.shapedAppIcon(packageName)) : functionsClass.shapedAppIcon(packageName);
+
+                            if (widgetIndex == 0) {
+                                configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
+                                indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
+                            } else {
+                                if (!oldAppName.equals(newAppName)) {
+                                    configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
+                                    indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
+                                }
+                            }
+
+                            oldAppName = functionsClass.appName(packageName);
+
+                            indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
+                            configuredWidgetsNavDrawerItems.add(new NavDrawerItem(
+                                    newAppName,
+                                    packageName,
+                                    widgetDataModel.getWidgetLabel(),
+                                    appIcon,
+                                    appWidgetProviderInfo,
+                                    appWidgetId,
+                                    widgetDataModel.getRecovery()
+                            ));
+
+                            widgetIndex++;
+                        } else {
+                            widgetDataInterface.initDataAccessObject().deleteByWidgetId(appWidgetId);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                widgetDataInterface.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            try {
+                configuredWidgetsRecyclerViewAdapter.notifyDataSetChanged();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    /*Free Functions*/
 
     public static void createWidget(Context context, ViewGroup widgetView, AppWidgetManager appWidgetManager, AppWidgetHost appWidgetHost, AppWidgetProviderInfo appWidgetProviderInfo, int widgetId) {
         try {
