@@ -230,7 +230,6 @@ public class FunctionsClass {
 
         if (ClassName.contains(HybridViewOff.class.getSimpleName())
                 || ClassName.contains(CategoryHandler.class.getSimpleName())
-                || ClassName.contains(Configurations.class.getSimpleName())
                 || ClassName.contains(CategoryAutoFeatures.class.getSimpleName())
                 || ClassName.contains(AppAutoFeatures.class.getSimpleName())) {
             if (LoadAds()) {
