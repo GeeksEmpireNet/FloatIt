@@ -66,7 +66,7 @@ public class RecoveryCategory extends Service {
         } finally {
             if (PublicVariable.floatingCounter == 0) {
                 if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                        .getBoolean("stable", true) == false) {
+                        .getBoolean("stable", false) == false) {
                     stopService(new Intent(getApplicationContext(), BindServices.class));
                 }
             }

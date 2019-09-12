@@ -171,15 +171,19 @@ public class App_Unlimited_Shortcuts extends Service {
                                 PublicVariable.floatingCounter = PublicVariable.floatingCounter - 1;
 
                                 if (PublicVariable.floatingCounter == 0) {
+                                    PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                                     if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                            .getBoolean("stable", true) == false) {
+                                            .getBoolean("stable", false) == false) {
                                         stopService(new Intent(getApplicationContext(), BindServices.class));
                                     }
                                 }
                             }
                         } else if (PublicVariable.floatingCounter == 0) {
+                            PublicVariable.eligibleLoadShowAdsFORCE = false;
+
                             if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                    .getBoolean("stable", true) == false) {
+                                    .getBoolean("stable", false) == false) {
                                 stopService(new Intent(getApplicationContext(), BindServices.class));
                             }
                         }
@@ -537,8 +541,10 @@ public class App_Unlimited_Shortcuts extends Service {
                             PublicVariable.shortcutsCounter = PublicVariable.shortcutsCounter - 1;
 
                             if (PublicVariable.floatingCounter == 0) {
+                                PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                                 if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                        .getBoolean("stable", true) == false) {
+                                        .getBoolean("stable", false) == false) {
                                     stopService(new Intent(getApplicationContext(), BindServices.class));
                                 }
                                 if (broadcastReceiver != null) {
@@ -745,8 +751,10 @@ public class App_Unlimited_Shortcuts extends Service {
                             PublicVariable.shortcutsCounter = PublicVariable.shortcutsCounter - 1;
 
                             if (PublicVariable.floatingCounter == 0) {
+                                PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                                 if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                        .getBoolean("stable", true) == false) {
+                                        .getBoolean("stable", false) == false) {
                                     stopService(new Intent(getApplicationContext(), BindServices.class));
                                 }
                                 if (broadcastReceiver != null) {

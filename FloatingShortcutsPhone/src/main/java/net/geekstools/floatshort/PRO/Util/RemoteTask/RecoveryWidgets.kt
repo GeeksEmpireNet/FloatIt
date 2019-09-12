@@ -82,7 +82,7 @@ class RecoveryWidgets : Service() {
             } finally {
                 if (PublicVariable.floatingCounter == 0) {
                     if (PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                                    .getBoolean("stable", true) == false) {
+                                    .getBoolean("stable", false) == false) {
                         stopService(Intent(applicationContext, BindServices::class.java))
                     }
                 }

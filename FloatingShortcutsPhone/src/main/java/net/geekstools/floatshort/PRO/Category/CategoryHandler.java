@@ -74,6 +74,7 @@ import com.google.firebase.storage.UploadTask;
 
 import net.geekstools.floatshort.PRO.Automation.Categories.CategoryAutoFeatures;
 import net.geekstools.floatshort.PRO.BindServices;
+import net.geekstools.floatshort.PRO.BuildConfig;
 import net.geekstools.floatshort.PRO.Category.NavAdapter.CategoryListAdapter;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Shortcuts.HybridViewOff;
@@ -398,7 +399,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
             public void onClick(View view) {
                 try {
                     if (functionsClass.networkConnection() && firebaseAuth.getCurrentUser() != null) {
-                        if (rewardedVideoAdInstance.isLoaded()) {
+                        if (rewardedVideoAdInstance.isLoaded() && PublicVariable.eligibleLoadShowAdsFORCE) {
                             rewardedVideoAdInstance.show();
                         } else {
                             try {
@@ -725,7 +726,9 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
         registerReceiver(broadcastReceiver, intentFilter);
         try {
             if (!getFileStreamPath(".License").exists() && functionsClass.networkConnection() == true) {
-                startService(new Intent(getApplicationContext(), LicenseValidator.class));
+                if (!BuildConfig.DEBUG) {
+                    startService(new Intent(getApplicationContext(), LicenseValidator.class));
+                }
             } else {
                 try {
                     unregisterReceiver(broadcastReceiver);
@@ -952,7 +955,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
                 try {
 
 
-                    if (rewardedVideoAdInstance.isLoaded()) {
+                    if (rewardedVideoAdInstance.isLoaded() && PublicVariable.eligibleLoadShowAdsFORCE) {
                         rewardedVideoAdInstance.show();
                     } else {
                         try {

@@ -92,15 +92,19 @@ public class Widget_Unlimited_Floating extends Service {
                                     PublicVariable.floatingCounter = PublicVariable.floatingCounter - 1;
 
                                     if (PublicVariable.floatingCounter == 0) {
+                                        PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                                         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                                .getBoolean("stable", true) == false) {
+                                                .getBoolean("stable", false) == false) {
                                             stopService(new Intent(getApplicationContext(), BindServices.class));
                                         }
                                     }
                                 }
                             } else if (PublicVariable.floatingCounter == 0) {
+                                PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                                 if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                        .getBoolean("stable", true) == false) {
+                                        .getBoolean("stable", false) == false) {
                                     stopService(new Intent(getApplicationContext(), BindServices.class));
                                 }
                             }
@@ -303,8 +307,10 @@ public class Widget_Unlimited_Floating extends Service {
                     PublicVariable.widgetsCounter = PublicVariable.widgetsCounter - 1;
 
                     if (PublicVariable.floatingCounter == 0) {
+                        PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                         if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                                .getBoolean("stable", true) == false) {
+                                .getBoolean("stable", false) == false) {
                             stopService(new Intent(getApplicationContext(), BindServices.class));
                         }
 

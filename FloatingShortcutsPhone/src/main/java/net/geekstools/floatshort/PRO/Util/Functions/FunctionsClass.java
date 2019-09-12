@@ -253,7 +253,7 @@ public class FunctionsClass {
                     interstitialAdApps.setAdUnitId(context.getString(R.string.AdUnitActivities));
                 }
                 if (PublicVariable.eligibleLoadShowAds) {
-                    if (interstitialAdApps.isLoaded()) {
+                    if (interstitialAdApps.isLoaded() && PublicVariable.eligibleLoadShowAdsFORCE) {
                         interstitialAdApps.show();
                     } else {
                         interstitialAdApps.loadAd(adRequestinterstitialAd);
@@ -314,6 +314,8 @@ public class FunctionsClass {
                                 }
                                 intentTarget.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intentTarget);
+                            } else {
+                                interstitialAdApps.loadAd(adRequestinterstitialAd);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -501,7 +503,7 @@ public class FunctionsClass {
         switch (AdsPlace) {
             case InterstitialAdPlace.AppsList: {
                 if (interstitialAdApps != null) {
-                    if (interstitialAdApps.isLoaded() && PublicVariable.eligibleLoadShowAds) {
+                    if (interstitialAdApps.isLoaded() && PublicVariable.eligibleLoadShowAds && PublicVariable.eligibleLoadShowAdsFORCE) {
                         interstitialAdApps.show();
                     }
                 }
@@ -510,7 +512,7 @@ public class FunctionsClass {
             }
             case InterstitialAdPlace.SettingGUI: {
                 if (interstitialAdSettingsGUI != null) {
-                    if (interstitialAdSettingsGUI.isLoaded() && PublicVariable.eligibleLoadShowAds) {
+                    if (interstitialAdSettingsGUI.isLoaded() && PublicVariable.eligibleLoadShowAds && PublicVariable.eligibleLoadShowAdsFORCE) {
                         interstitialAdSettingsGUI.show();
                     }
                 }
@@ -525,7 +527,7 @@ public class FunctionsClass {
         switch (AdsPlace) {
             case InterstitialAdPlace.AppsList: {
                 if (interstitialAdApps != null) {
-                    if (interstitialAdApps.isLoaded() && PublicVariable.eligibleLoadShowAds) {
+                    if (interstitialAdApps.isLoaded() && PublicVariable.eligibleLoadShowAds && PublicVariable.eligibleLoadShowAdsFORCE) {
                         interstitialAdApps.show();
                     }
                 }
@@ -534,7 +536,7 @@ public class FunctionsClass {
             }
             case InterstitialAdPlace.SettingGUI: {
                 if (interstitialAdSettingsGUI != null) {
-                    if (interstitialAdSettingsGUI.isLoaded() && PublicVariable.eligibleLoadShowAds) {
+                    if (interstitialAdSettingsGUI.isLoaded() && PublicVariable.eligibleLoadShowAds && PublicVariable.eligibleLoadShowAdsFORCE) {
                         interstitialAdSettingsGUI.show();
                     }
                 }
@@ -1084,6 +1086,8 @@ public class FunctionsClass {
 
     /*Unlimited Shortcuts Function*/
     public void runUnlimitedShortcutsService(String packageName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1138,6 +1142,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedWifi(String packageName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1160,6 +1166,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedBluetooth(String packageName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1182,6 +1190,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedGps(String packageName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1204,6 +1214,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedNfc(String packageName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1226,6 +1238,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedTime(String packageName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1248,6 +1262,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedShortcutsServiceHIS(String packageName, String className) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1339,6 +1355,8 @@ public class FunctionsClass {
 
     /*Category Function*/
     public void runUnlimitedCategoryService(String categoryName) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1373,6 +1391,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedCategoryWifi(String categoryName, String[] categoryNamePackages) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1397,6 +1417,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedCategoryBluetooth(String categoryName, String[] categoryNamePackages) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1421,6 +1443,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedCategoryGps(String categoryName, String[] categoryNamePackages) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1445,6 +1469,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedCategoryNfc(String categoryName, String[] categoryNamePackages) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1469,6 +1495,8 @@ public class FunctionsClass {
     }
 
     public void runUnlimitedCategoryTime(String categoryName, String[] categoryNamePackages) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -1570,6 +1598,8 @@ public class FunctionsClass {
 
     /*Floating Widgets Function*/
     public void runUnlimitedWidgetService(int WidgetId, String widgetLabel) {
+        PublicVariable.eligibleLoadShowAdsFORCE = false;
+
         if (API > 22) {
             if (!Settings.canDrawOverlays(context)) {
                 context.startActivity(new Intent(context, CheckPoint.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -2703,7 +2733,7 @@ public class FunctionsClass {
     }
 
     public boolean ControlPanel() {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("stable", true);
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("stable", false);
     }
 
     public int bindServicePriority() {
@@ -4718,7 +4748,7 @@ public class FunctionsClass {
                         break;
                     }
                     case 2: {
-                        if (PublicVariable.eligibleLoadShowAds && interstitialAdWidgetShortcuts.isLoaded()) {
+                        if (PublicVariable.eligibleLoadShowAdsFORCE && PublicVariable.eligibleLoadShowAds && interstitialAdWidgetShortcuts.isLoaded()) {
                             packageNameWidget = packageName;
                             shortcutNameWidget = widgetLabel;
                             widgetPreviewDrawable = widgetPreview;

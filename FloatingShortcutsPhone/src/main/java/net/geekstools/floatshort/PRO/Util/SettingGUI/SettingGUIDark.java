@@ -239,6 +239,8 @@ public class SettingGUIDark extends PreferenceActivity implements OnSharedPrefer
                         startService(new Intent(getApplicationContext(), BindServices.class));
                     } else if (sharedPreferences.getBoolean("cache", true) == false) {
                         if (PublicVariable.floatingCounter == 0) {
+                            PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                             stopService(new Intent(getApplicationContext(), BindServices.class));
                         }
 
@@ -251,12 +253,14 @@ public class SettingGUIDark extends PreferenceActivity implements OnSharedPrefer
         stable.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                if (sharedPreferences.getBoolean("stable", true) == true) {
+                if (sharedPreferences.getBoolean("stable", false) == true) {
                     PublicVariable.Stable = true;
                     startService(new Intent(getApplicationContext(), BindServices.class));
-                } else if (sharedPreferences.getBoolean("stable", true) == false) {
+                } else if (sharedPreferences.getBoolean("stable", false) == false) {
                     PublicVariable.Stable = false;
                     if (PublicVariable.floatingCounter == 0) {
+                        PublicVariable.eligibleLoadShowAdsFORCE = true;
+
                         stopService(new Intent(getApplicationContext(), BindServices.class));
                     }
 

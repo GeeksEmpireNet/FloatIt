@@ -64,7 +64,7 @@ public class RecoveryShortcuts extends Service {
             } finally {
                 if (PublicVariable.floatingCounter == 0) {
                     if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                            .getBoolean("stable", true) == false) {
+                            .getBoolean("stable", false) == false) {
                         stopService(new Intent(getApplicationContext(), BindServices.class));
                     }
                 }
@@ -72,7 +72,7 @@ public class RecoveryShortcuts extends Service {
         }
         if (PublicVariable.floatingCounter == 0) {
             if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
-                    .getBoolean("stable", true) == false) {
+                    .getBoolean("stable", false) == false) {
                 stopService(new Intent(getApplicationContext(), BindServices.class));
             }
         }

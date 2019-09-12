@@ -193,6 +193,10 @@ public class BindServices extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (PublicVariable.floatingCounter < 1) {
+            PublicVariable.eligibleLoadShowAdsFORCE = true;
+        }
+
         try {
             unregisterReceiver(broadcastReceiverAction);
         } catch (Exception e) {

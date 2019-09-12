@@ -84,5 +84,6 @@ public class PublicVariable {
     public static boolean interstitialAdLoaded = false;
     public static boolean AdsRewarded = false;
     public static boolean eligibleLoadShowAds = false;
+    public static boolean eligibleLoadShowAdsFORCE = (PublicVariable.floatingCounter == 0);
     /*FREE*/
 }

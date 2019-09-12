@@ -78,6 +78,7 @@ import com.google.firebase.storage.UploadTask;
 
 import net.geekstools.floatshort.PRO.Automation.Apps.AppAutoFeatures;
 import net.geekstools.floatshort.PRO.BindServices;
+import net.geekstools.floatshort.PRO.BuildConfig;
 import net.geekstools.floatshort.PRO.Category.CategoryHandler;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Shortcuts.NavAdapter.CardHybridAdapter;
@@ -423,7 +424,7 @@ public class HybridViewOff extends Activity implements View.OnClickListener, Vie
             public void onClick(View view) {
                 try {
                     if (functionsClass.networkConnection() && firebaseAuth.getCurrentUser() != null) {
-                        if (rewardedVideoAdInstance.isLoaded()) {
+                        if (rewardedVideoAdInstance.isLoaded() && PublicVariable.eligibleLoadShowAdsFORCE) {
                             rewardedVideoAdInstance.show();
                         } else {
                             try {
@@ -750,11 +751,14 @@ public class HybridViewOff extends Activity implements View.OnClickListener, Vie
         registerReceiver(broadcastReceiver, intentFilter);
         try {
             if (!getFileStreamPath(".License").exists() && functionsClass.networkConnection() == true) {
-                startService(new Intent(getApplicationContext(), LicenseValidator.class));
+                if (!BuildConfig.DEBUG) {
+                    startService(new Intent(getApplicationContext(), LicenseValidator.class));
+                }
             } else {
                 try {
                     unregisterReceiver(broadcastReceiver);
                 } catch (Exception e) {
+
                 }
             }
         } catch (Exception e) {
@@ -978,7 +982,7 @@ public class HybridViewOff extends Activity implements View.OnClickListener, Vie
     public void onSwipe(int direction) {
         switch (direction) {
             case SimpleGestureFilterSwitch.SWIPE_RIGHT: {
-                if (rewardedVideoAdInstance.isLoaded()) {
+                if (rewardedVideoAdInstance.isLoaded() && PublicVariable.eligibleLoadShowAdsFORCE) {
                     rewardedVideoAdInstance.show();
                 } else {
                     try {

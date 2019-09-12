@@ -90,14 +90,14 @@ public class Configurations extends Activity {
 
         functionsClass.checkLightDarkTheme();
 
-        if (sharedPreferences.getBoolean("stable", true) == true) {
+        if (sharedPreferences.getBoolean("stable", false) == true) {
             PublicVariable.Stable = true;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(new Intent(getApplicationContext(), BindServices.class));
             } else {
                 startService(new Intent(getApplicationContext(), BindServices.class));
             }
-        } else if (sharedPreferences.getBoolean("stable", true) == false) {
+        } else if (sharedPreferences.getBoolean("stable", false) == false) {
             PublicVariable.Stable = false;
         }
 

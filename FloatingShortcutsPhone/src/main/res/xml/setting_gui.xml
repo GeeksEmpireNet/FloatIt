@@ -104,7 +104,7 @@
             android:summary="@string/freeFormDesc"
             android:title="@string/freeFormTitle" />
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:icon="@drawable/draw_pref"
             android:key="stable"
             android:title="@string/stable" />
