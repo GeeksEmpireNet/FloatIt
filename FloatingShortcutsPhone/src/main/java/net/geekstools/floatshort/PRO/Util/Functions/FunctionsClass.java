@@ -248,11 +248,17 @@ public class FunctionsClass {
                         .addTestDevice("DD428143B4772EC7AA87D1E2F9DA787C")
                         .addTestDevice("F54D998BCE077711A17272B899B44798")
                         .build();
-                interstitialAdApps = new InterstitialAd(context);
-                interstitialAdApps.setImmersiveMode(true);
-                interstitialAdApps.setAdUnitId(context.getString(R.string.AdUnitActivities));
+                if (interstitialAdApps == null) {
+                    interstitialAdApps = new InterstitialAd(context);
+                    interstitialAdApps.setImmersiveMode(true);
+                    interstitialAdApps.setAdUnitId(context.getString(R.string.AdUnitActivities));
+                }
                 if (PublicVariable.eligibleLoadShowAds) {
-                    interstitialAdApps.loadAd(adRequestinterstitialAd);
+                    if (interstitialAdApps.isLoaded()) {
+                        interstitialAdApps.show();
+                    } else {
+                        interstitialAdApps.loadAd(adRequestinterstitialAd);
+                    }
                 }
                 interstitialAdApps.setAdListener(new AdListener() {
                     @Override
@@ -260,9 +266,6 @@ public class FunctionsClass {
                         FunctionsClassDebug.Companion.PrintDebug("*** InterstitialAd Loaded | Activities ***");
 
                         PublicVariable.interstitialAdLoaded = true;
-                        if (PublicVariable.eligibleLoadShowAds) {
-                            interstitialAdApps.show();
-                        }
                     }
 
                     @Override
@@ -779,25 +782,29 @@ public class FunctionsClass {
         preferencesView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PublicVariable.actionCenter = false;
-                PublicVariable.recoveryCenter = false;
+                if (PublicVariable.interstitialAdLoaded) {
+                    ShowAds(InterstitialAdPlace.AppsList, PublicVariable.themeLightDark ? SettingGUILight.class.getSimpleName() : SettingGUIDark.class.getSimpleName());
+                } else {
+                    PublicVariable.actionCenter = false;
+                    PublicVariable.recoveryCenter = false;
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.
-                                makeSceneTransitionAnimation(activity, preferencesView, "transition");
-                        Intent intent = new Intent();
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.setClass(activity, SettingGUIDark.class);
-                        if (PublicVariable.themeLightDark) {
-                            intent.setClass(activity, SettingGUILight.class);
-                        } else if (!PublicVariable.themeLightDark) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.
+                                    makeSceneTransitionAnimation(activity, preferencesView, "transition");
+                            Intent intent = new Intent();
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.setClass(activity, SettingGUIDark.class);
+                            if (PublicVariable.themeLightDark) {
+                                intent.setClass(activity, SettingGUILight.class);
+                            } else if (!PublicVariable.themeLightDark) {
+                                intent.setClass(activity, SettingGUIDark.class);
+                            }
+                            activity.startActivity(intent, activityOptionsCompat.toBundle());
                         }
-                        activity.startActivity(intent, activityOptionsCompat.toBundle());
-                    }
-                }, 113);
+                    }, 113);
+                }
             }
         });
     }

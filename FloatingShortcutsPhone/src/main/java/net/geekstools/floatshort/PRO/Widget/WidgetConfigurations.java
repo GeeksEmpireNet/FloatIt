@@ -1074,12 +1074,10 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
                     AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
                     if (appWidgetInfo.configure != null) {
-
                         Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
                         intent.setComponent(appWidgetInfo.configure);
                         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
                         startActivityForResult(intent, InstalledWidgetsAdapter.SYSTEM_WIDGET_PICKER_CONFIGURATION);
-
                     } else {
                         new Thread(new Runnable() {
                             @Override
@@ -1087,9 +1085,9 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
 
                                 WidgetDataModel widgetDataModel = new WidgetDataModel(
                                         appWidgetId,
-                                        InstalledWidgetsAdapter.pickedWidgetPackageName,
-                                        functionsClass.appName(InstalledWidgetsAdapter.pickedWidgetPackageName),
-                                        InstalledWidgetsAdapter.pickedWidgetLabel,
+                                        appWidgetInfo.provider.getPackageName(),
+                                        functionsClass.appName(appWidgetInfo.provider.getPackageName()),
+                                        appWidgetInfo.loadLabel(getPackageManager()),
                                         false
                                 );
 
@@ -1126,6 +1124,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                 case InstalledWidgetsAdapter.SYSTEM_WIDGET_PICKER_CONFIGURATION: {
                     Bundle extras = data.getExtras();
                     int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
+                    AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
 
                     new Thread(new Runnable() {
                         @Override
@@ -1133,9 +1132,9 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
 
                             WidgetDataModel widgetDataModel = new WidgetDataModel(
                                     appWidgetId,
-                                    InstalledWidgetsAdapter.pickedWidgetPackageName,
-                                    functionsClass.appName(InstalledWidgetsAdapter.pickedWidgetPackageName),
-                                    InstalledWidgetsAdapter.pickedWidgetLabel,
+                                    appWidgetInfo.provider.getPackageName(),
+                                    functionsClass.appName(appWidgetInfo.provider.getPackageName()),
+                                    appWidgetInfo.loadLabel(getPackageManager()),
                                     false
                             );
 
