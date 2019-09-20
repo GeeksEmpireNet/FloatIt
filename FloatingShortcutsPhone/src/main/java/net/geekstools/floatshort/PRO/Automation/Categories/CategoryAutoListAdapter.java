@@ -32,19 +32,20 @@ import java.util.ArrayList;
 
 public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoListAdapter.ViewHolder> {
 
+    private Context context;
+    private Activity activity;
+
     FunctionsClass functionsClass;
+
     ImageView imageView;
     RelativeLayout freqLayout;
-    LinearLayout[] selectedApps;
-    TextView[] timeView;
-    CheckBox[] autoChoice;
-    EditText[] categoryName;
+
+
     String autoIdAppend;
     View view;
     ViewHolder viewHolder;
     LoadCustomIcons loadCustomIcons;
-    private Context context;
-    private Activity activity;
+
     private ArrayList<NavDrawerItem> navDrawerItems;
 
     public CategoryAutoListAdapter(Activity activity, Context context, ArrayList<NavDrawerItem> navDrawerItems) {
@@ -53,11 +54,6 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
         this.navDrawerItems = navDrawerItems;
 
         functionsClass = new FunctionsClass(context);
-
-        selectedApps = new LinearLayout[navDrawerItems.size()];
-        categoryName = new EditText[navDrawerItems.size()];
-        timeView = new TextView[navDrawerItems.size()];
-        autoChoice = new CheckBox[navDrawerItems.size()];
 
         if (PublicVariable.autoID != null) {
             if (PublicVariable.autoID.equals(context.getString(R.string.wifi_category))) {
@@ -88,35 +84,29 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
     @Override
     public void onBindViewHolder(ViewHolder viewHolderBinder, final int position) {
 
-        RelativeLayout categoryItem = viewHolderBinder.categoryItem;
-        selectedApps[position] = viewHolderBinder.selectedApp;
-        categoryName[position] = viewHolderBinder.categoryName;
-        timeView[position] = viewHolderBinder.timeView;
-        autoChoice[position] = viewHolderBinder.autoChoice;
+        viewHolderBinder.categoryName.setTextColor(PublicVariable.colorLightDarkOpposite);
+        viewHolderBinder.categoryName.setHintTextColor(functionsClass.setColorAlpha(PublicVariable.colorLightDarkOpposite, 175));
 
-        categoryName[position].setTextColor(PublicVariable.colorLightDarkOpposite);
-        categoryName[position].setHintTextColor(functionsClass.setColorAlpha(PublicVariable.colorLightDarkOpposite, 175));
-
-        autoChoice[position].setButtonTintList(ColorStateList.valueOf(PublicVariable.colorLightDarkOpposite));
+        viewHolderBinder.autoChoice.setButtonTintList(ColorStateList.valueOf(PublicVariable.colorLightDarkOpposite));
 
         final String nameCategory = navDrawerItems.get(position).getCategory();
         final String[] categoryPackages = navDrawerItems.get(position).getPackName();
 
-        categoryName[position].setText(navDrawerItems.get(position).getCategory());
-        timeView[position].setText(String.valueOf(nameCategory.charAt(0)).toUpperCase());
+        viewHolderBinder.categoryName.setText(navDrawerItems.get(position).getCategory());
+        viewHolderBinder.timeView.setText(String.valueOf(nameCategory.charAt(0)).toUpperCase());
 
         if (nameCategory.equals(context.getPackageName())) {
             try {
-                timeView[position].setText(context.getString(R.string.index_item));
-                categoryName[position].setText("");
-                selectedApps[position].removeAllViews();
+                viewHolderBinder.timeView.setText(context.getString(R.string.index_item));
+                viewHolderBinder.categoryName.setText("");
+                viewHolderBinder.selectedApp.removeAllViews();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             File autoFile = context.getFileStreamPath(nameCategory);
             if (autoFile.exists() && autoFile.isFile()) {
-                selectedApps[position].removeAllViews();
+                viewHolderBinder.selectedApp.removeAllViews();
                 int previewItems = 7;
                 if (categoryPackages.length < 7) {
                     previewItems = categoryPackages.length;
@@ -128,7 +118,7 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
                             loadCustomIcons.getDrawableIconForPackage(categoryPackages[i], functionsClass.shapedAppIcon(categoryPackages[i]))
                             :
                             functionsClass.shapedAppIcon(categoryPackages[i]));
-                    selectedApps[position].addView(freqLayout);
+                    viewHolderBinder.selectedApp.addView(freqLayout);
                 }
             }
         }
@@ -136,31 +126,31 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
         try {
             if (PublicVariable.autoID.equals(context.getString(R.string.time_category))) {
                 File autoFile = context.getFileStreamPath(nameCategory + ".Time");
-                autoChoice[position].setChecked(false);
-                timeView[position].setTextSize(50);
+                viewHolderBinder.autoChoice.setChecked(false);
+                viewHolderBinder.timeView.setTextSize(50);
                 if (autoFile.exists()) {
-                    autoChoice[position].setChecked(true);
-                    timeView[position].setTextSize(15);
-                    timeView[position].setText(navDrawerItems.get(position).getTimes());
-                    timeView[position].setVisibility(View.VISIBLE);
+                    viewHolderBinder.autoChoice.setChecked(true);
+                    viewHolderBinder.timeView.setTextSize(15);
+                    viewHolderBinder.timeView.setText(navDrawerItems.get(position).getTimes());
+                    viewHolderBinder.timeView.setVisibility(View.VISIBLE);
                 } else {
-                    autoChoice[position].setChecked(false);
-                    timeView[position].setTextSize(50);
+                    viewHolderBinder.autoChoice.setChecked(false);
+                    viewHolderBinder.timeView.setTextSize(50);
                 }
             } else {
                 File autoFile = context.getFileStreamPath(nameCategory + "." + autoIdAppend);
-                autoChoice[position].setChecked(false);
+                viewHolderBinder.autoChoice.setChecked(false);
                 if (autoFile.exists()) {
-                    autoChoice[position].setChecked(true);
+                    viewHolderBinder.autoChoice.setChecked(true);
                 } else {
-                    autoChoice[position].setChecked(false);
+                    viewHolderBinder.autoChoice.setChecked(false);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        categoryItem.setOnClickListener(new View.OnClickListener() {
+        viewHolderBinder.categoryItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (PublicVariable.autoID == null) {
@@ -181,11 +171,11 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
                             }
 
                             functionsClass.removeLine(".times.clocks", navDrawerItems.get(position).getTimes());
-                            autoChoice[position].setChecked(false);
-                            timeView[position].setTextSize(50);
-                            timeView[position].setText(String.valueOf(navDrawerItems.get(position).getCategory().charAt(0)).toUpperCase());
+                            viewHolderBinder.autoChoice.setChecked(false);
+                            viewHolderBinder.timeView.setTextSize(50);
+                            viewHolderBinder.timeView.setText(String.valueOf(navDrawerItems.get(position).getCategory().charAt(0)).toUpperCase());
                         } else {
-                            autoChoice[position].setChecked(true);
+                            viewHolderBinder.autoChoice.setChecked(true);
                             context.startActivity(
                                     new Intent(context, TimeDialogue.class)
                                             .putExtra("content", navDrawerItems.get(position).getCategory())
@@ -199,7 +189,7 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
                             context.deleteFile(
                                     navDrawerItems.get(position).getCategory() + "." + autoIdAppend);
                             functionsClass.removeLine(".auto" + autoIdAppend + "Category", navDrawerItems.get(position).getCategory());
-                            autoChoice[position].setChecked(false);
+                            viewHolderBinder.autoChoice.setChecked(false);
                         } else {
                             functionsClass.saveFile(
                                     navDrawerItems.get(position).getCategory() + "." + autoIdAppend,
@@ -207,7 +197,7 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
                             functionsClass.saveFileAppendLine(
                                     ".auto" + autoIdAppend + "Category",
                                     navDrawerItems.get(position).getCategory());
-                            autoChoice[position].setChecked(true);
+                            viewHolderBinder.autoChoice.setChecked(true);
                         }
                     }
                 }
@@ -215,13 +205,13 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
         });
 
         RippleDrawable drawItem = (RippleDrawable) context.getDrawable(R.drawable.ripple_effect_category_logo);
-        drawItem.setDrawableByLayerId(R.id.category_logo_layer, functionsClass.shapesDrawablesCategory(timeView[position]));
-        drawItem.setDrawableByLayerId(android.R.id.mask, functionsClass.shapesDrawablesCategory(timeView[position]));
+        drawItem.setDrawableByLayerId(R.id.category_logo_layer, functionsClass.shapesDrawablesCategory(viewHolderBinder.timeView));
+        drawItem.setDrawableByLayerId(android.R.id.mask, functionsClass.shapesDrawablesCategory(viewHolderBinder.timeView));
         Drawable categoryLogoLayer = (Drawable) drawItem.findDrawableByLayerId(R.id.category_logo_layer);
         Drawable categoryMask = (Drawable) drawItem.findDrawableByLayerId(android.R.id.mask);
         categoryLogoLayer.setTint(PublicVariable.primaryColorOpposite);
         categoryMask.setTint(PublicVariable.primaryColor);
-        timeView[position].setBackground(drawItem);
+        viewHolderBinder.timeView.setBackground(drawItem);
 
         RippleDrawable drawCategories = (RippleDrawable) context.getDrawable(R.drawable.auto_category);
         GradientDrawable backCategories = (GradientDrawable) drawCategories.findDrawableByLayerId(R.id.category_item);
@@ -230,7 +220,7 @@ public class CategoryAutoListAdapter extends RecyclerView.Adapter<CategoryAutoLi
         backCategoriesRipple.setColor(PublicVariable.colorLightDarkOpposite);
         drawCategories.setColor(ColorStateList.valueOf(PublicVariable.primaryColorOpposite));
         drawCategories.setAlpha(7);
-        categoryItem.setBackground(drawCategories);
+        viewHolderBinder.categoryItem.setBackground(drawCategories);
     }
 
     @Override

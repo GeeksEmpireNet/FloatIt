@@ -31,16 +31,21 @@ import java.util.ArrayList;
 
 public class AppSelectionListAdapter extends RecyclerView.Adapter<AppSelectionListAdapter.ViewHolder> {
 
-    FunctionsClass functionsClass;
-    ImageView tempIcon;
-    float fromX, fromY, toX, toY, dpHeight, dpWidth, systemUiHeight;
-    int animationType, layoutInflater;
-    CheckBox[] autoChoice;
-    View view;
-    ViewHolder viewHolder;
-    LoadCustomIcons loadCustomIcons;
     private Context context;
     private Activity activity;
+    
+    FunctionsClass functionsClass;
+
+    ImageView tempIcon;
+
+    float fromX, fromY, toX, toY, dpHeight, dpWidth, systemUiHeight;
+    int animationType, layoutInflater;
+
+    View view;
+    ViewHolder viewHolder;
+
+    LoadCustomIcons loadCustomIcons;
+
     private ArrayList<NavDrawerItem> navDrawerItems;
 
     public AppSelectionListAdapter(Activity activity, Context context, ArrayList<NavDrawerItem> navDrawerItems) {
@@ -48,7 +53,6 @@ public class AppSelectionListAdapter extends RecyclerView.Adapter<AppSelectionLi
         this.context = context;
         this.navDrawerItems = navDrawerItems;
 
-        autoChoice = new CheckBox[navDrawerItems.size()];
         functionsClass = new FunctionsClass(context, activity);
         tempIcon = functionsClass.initShapesImage(activity, R.id.tempIcon);
 
@@ -93,21 +97,21 @@ public class AppSelectionListAdapter extends RecyclerView.Adapter<AppSelectionLi
     @Override
     public void onBindViewHolder(ViewHolder viewHolderBinder, final int position) {
         try {
-            autoChoice[position] = viewHolderBinder.autoChoice;
+            viewHolderBinder.autoChoice = viewHolderBinder.autoChoice;
             final String packageName = navDrawerItems.get(position).getPackageName();
             File autoFile = context.getFileStreamPath(packageName + PublicVariable.categoryName);
-            autoChoice[position].setChecked(false);
+            viewHolderBinder.autoChoice.setChecked(false);
             if (autoFile.exists()) {
-                autoChoice[position].setChecked(true);
+                viewHolderBinder.autoChoice.setChecked(true);
             } else {
-                autoChoice[position].setChecked(false);
+                viewHolderBinder.autoChoice.setChecked(false);
             }
 
             if (PublicVariable.themeLightDark) {
-                autoChoice[position].setButtonTintList(ColorStateList.valueOf(context.getColor(R.color.dark)));
+                viewHolderBinder.autoChoice.setButtonTintList(ColorStateList.valueOf(context.getColor(R.color.dark)));
             } else if (!PublicVariable.themeLightDark) {
                 viewHolder.appName.setTextColor(context.getColor(R.color.light));
-                autoChoice[position].setButtonTintList(ColorStateList.valueOf(context.getColor(R.color.light)));
+                viewHolderBinder.autoChoice.setButtonTintList(ColorStateList.valueOf(context.getColor(R.color.light)));
             }
 
             viewHolder.appIcon.setImageDrawable(navDrawerItems.get(position).getAppIcon());
@@ -129,7 +133,7 @@ public class AppSelectionListAdapter extends RecyclerView.Adapter<AppSelectionLi
                         if (autoFile.exists()) {
                             context.deleteFile(pack + PublicVariable.categoryName);
                             functionsClass.removeLine(PublicVariable.categoryName, navDrawerItems.get(position).getPackageName());
-                            autoChoice[position].setChecked(false);
+                            viewHolderBinder.autoChoice.setChecked(false);
                             context.sendBroadcast(new Intent(context.getString(R.string.counterActionAdvance)));
 
                             context.sendBroadcast(new Intent(context.getString(R.string.savedActionHideAdvance)));
@@ -139,7 +143,7 @@ public class AppSelectionListAdapter extends RecyclerView.Adapter<AppSelectionLi
                                     pack + PublicVariable.categoryName, pack);
                             functionsClass.saveFileAppendLine(
                                     PublicVariable.categoryName, pack);
-                            autoChoice[position].setChecked(true);
+                            viewHolderBinder.autoChoice.setChecked(true);
 
                             TranslateAnimation translateAnimation =
                                     new TranslateAnimation(animationType, fromX,
@@ -181,7 +185,7 @@ public class AppSelectionListAdapter extends RecyclerView.Adapter<AppSelectionLi
             }
         });
 
-        autoChoice[position].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        viewHolderBinder.autoChoice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
 

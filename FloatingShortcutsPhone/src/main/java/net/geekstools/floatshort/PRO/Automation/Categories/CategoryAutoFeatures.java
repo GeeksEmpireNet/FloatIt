@@ -499,6 +499,10 @@ public class CategoryAutoFeatures extends AppCompatActivity implements View.OnCl
         PublicVariable.eligibleLoadShowAds = false;
 
         functionsClass.CheckSystemRAM(CategoryAutoFeatures.this);
+
+        if (functionsClass.automationFeatureEnable()) {
+            startService(new Intent(getApplicationContext(), BindServices.class));
+        }
     }
 
     @Override
