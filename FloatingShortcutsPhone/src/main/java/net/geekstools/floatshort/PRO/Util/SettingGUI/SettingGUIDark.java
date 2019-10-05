@@ -849,7 +849,7 @@ public class SettingGUIDark extends PreferenceActivity implements OnSharedPrefer
         });
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        firebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+        firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_default);
         firebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(SettingGUIDark.this, new OnCompleteListener<Void>() {
                     @Override

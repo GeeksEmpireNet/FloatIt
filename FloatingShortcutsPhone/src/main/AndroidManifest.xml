@@ -104,7 +104,7 @@
             android:supportsPictureInPicture="true"
             android:theme="@style/GeeksEmpire.Material" />
         <activity
-            android:name=".Category.CategoryHandler"
+            android:name=".Category.FoldersHandler"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
             android:resizeableActivity="true"
@@ -226,7 +226,7 @@
         </activity>
         <activity
             android:name=".Util.RemoteTask.RemoveAllActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".Util.RemoteTask.RecoveryShortcutsActivity"
             android:exported="true"
@@ -272,6 +272,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Widget.WidgetsReallocationProcess"
+            android:excludeFromRecents="true"
+            android:theme="@style/GeeksEmpire.Material" />
         <activity
             android:name=".Util.RemoteTask.RemoteRecoveryActivity"
             android:exported="true"
@@ -331,7 +335,7 @@
             android:enabled="false"
             android:icon="@drawable/alias_categories"
             android:label="@string/floatingCategory"
-            android:targetActivity=".Category.CategoryHandler">
+            android:targetActivity=".Category.FoldersHandler">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -398,7 +402,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".Util.RemoteTask.RecoveryCategory"
+            android:name=".Util.RemoteTask.RecoveryFolders"
             android:exported="true"
             android:theme="@android:style/Theme.NoDisplay" />
         <service

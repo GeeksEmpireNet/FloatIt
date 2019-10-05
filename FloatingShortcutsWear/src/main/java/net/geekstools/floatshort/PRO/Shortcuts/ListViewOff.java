@@ -29,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import net.geekstools.floatshort.PRO.Automation.RecoveryShortcuts;
 import net.geekstools.floatshort.PRO.BuildConfig;
@@ -99,11 +98,7 @@ public class ListViewOff extends WearableActivity implements View.OnClickListene
         }
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(BuildConfig.DEBUG)
-                .build();
-        firebaseRemoteConfig.setConfigSettings(configSettings);
-        firebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+        firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_default);
         firebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(ListViewOff.this, new OnCompleteListener<Void>() {
                     @Override

@@ -63,7 +63,6 @@ public class Widget_Unlimited_Floating extends Service {
         if (startId >= array) {
             return START_NOT_STICKY;
         }
-        appWidgetId[startId] = intent.getIntExtra("WidgetId", -1);
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         floatingView[startId] = (ViewGroup) layoutInflater.inflate(R.layout.floating_widgets, null, false);
@@ -115,6 +114,8 @@ public class Widget_Unlimited_Floating extends Service {
                 return START_NOT_STICKY;
             }
         }
+
+        appWidgetId[startId] = intent.getIntExtra("WidgetId", -1);
 
         appWidgetProviderInfo[startId] = appWidgetManager.getAppWidgetInfo(appWidgetId[startId]);
         appWidgetHosts[startId] = new AppWidgetHost(this, (int) System.currentTimeMillis());

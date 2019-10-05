@@ -11,7 +11,7 @@ import android.preference.PreferenceManager;
 import net.geekstools.floatshort.PRO.BindServices;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClassDebug;
-import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryCategory;
+import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryFolders;
 import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryShortcuts;
 import net.geekstools.floatshort.PRO.Util.UI.CustomIconManager.LoadCustomIcons;
 
@@ -22,6 +22,8 @@ public class BootRecoverReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         functionsClass = new FunctionsClass(context);
+        functionsClass.savePreference("WidgetsInformation", "Reallocated", false);
+
         try {
             if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
                 if (functionsClass.ControlPanel()) {
@@ -59,7 +61,7 @@ public class BootRecoverReceiver extends BroadcastReceiver {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent categoryRecovery = new Intent(context, RecoveryCategory.class);
+                            Intent categoryRecovery = new Intent(context, RecoveryFolders.class);
                             categoryRecovery.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 context.startForegroundService(categoryRecovery);
@@ -84,7 +86,7 @@ public class BootRecoverReceiver extends BroadcastReceiver {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent categoryRecovery = new Intent(context, RecoveryCategory.class);
+                            Intent categoryRecovery = new Intent(context, RecoveryFolders.class);
                             categoryRecovery.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 context.startForegroundService(categoryRecovery);

@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.util.DisplayMetrics;
@@ -32,6 +33,8 @@ import net.geekstools.floatshort.PRO.Util.NavAdapter.NavDrawerItem;
 import net.geekstools.floatshort.PRO.Widget.RoomDatabase.WidgetDataDAO;
 import net.geekstools.floatshort.PRO.Widget.RoomDatabase.WidgetDataInterface;
 import net.geekstools.floatshort.PRO.Widget.WidgetConfigurations;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -70,7 +73,7 @@ public class ConfiguredWidgetsAdapter extends RecyclerView.Adapter<ConfiguredWid
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolderBinder, final int position) {
+    public void onBindViewHolder(@NotNull ViewHolder viewHolderBinder, final int position) {
         AppWidgetProviderInfo appWidgetProviderInfo = navDrawerItems.get(position).getAppWidgetProviderInfo();
         int appWidgetId = navDrawerItems.get(position).getAppWidgetId();
 
@@ -97,11 +100,12 @@ public class ConfiguredWidgetsAdapter extends RecyclerView.Adapter<ConfiguredWid
             public boolean onLongClick(View view) {
                 functionsClass.doVibrate(77);
 
-                functionsClass.popupOptionWidget(activity, context, view,
+                functionsClass.popupOptionWidget(context, view,
                         navDrawerItems.get(position).getPackageName(),
-                        navDrawerItems.get(position).getAppWidgetId(),
+                        navDrawerItems.get(position).getClassNameProviderWidget(),
                         navDrawerItems.get(position).getWidgetLabel(),
-                        appWidgetProviderInfo.loadPreviewImage(context, DisplayMetrics.DENSITY_LOW) != null ? appWidgetProviderInfo.loadPreviewImage(context, DisplayMetrics.DENSITY_HIGH) : appWidgetProviderInfo.loadIcon(context, DisplayMetrics.DENSITY_HIGH),
+                        appWidgetProviderInfo.loadPreviewImage(context, DisplayMetrics.DENSITY_LOW) != null ?
+                                appWidgetProviderInfo.loadPreviewImage(context, DisplayMetrics.DENSITY_HIGH) : appWidgetProviderInfo.loadIcon(context, DisplayMetrics.DENSITY_HIGH),
                         navDrawerItems.get(position).getAddedWidgetRecovery());
 
                 return true;
@@ -127,13 +131,19 @@ public class ConfiguredWidgetsAdapter extends RecyclerView.Adapter<ConfiguredWid
                                             @Override
                                             public void onOpen(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
                                                 super.onOpen(supportSQLiteDatabase);
-
                                             }
                                         })
                                         .build();
                                 WidgetDataDAO widgetDataDAO = widgetDataInterface.initDataAccessObject();
                                 widgetDataDAO.updateWidgetLabelByWidgetId(navDrawerItems.get(position).getAppWidgetId(), textView.getText().toString().replace("\uD83D\uDD04", ""));
                                 widgetDataInterface.close();
+
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        context.sendBroadcast(new Intent("FORCE_RELOAD"));
+                                    }
+                                });
                             }
                         }).start();
                     }

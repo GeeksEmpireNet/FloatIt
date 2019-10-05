@@ -61,7 +61,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import net.geekstools.floatshort.PRO.Automation.Apps.AppAutoFeatures;
-import net.geekstools.floatshort.PRO.Category.CategoryHandler;
+import net.geekstools.floatshort.PRO.Category.FoldersHandler;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Shortcuts.HybridViewOff;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
@@ -69,7 +69,7 @@ import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClassDebug;
 import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;
 import net.geekstools.floatshort.PRO.Util.NavAdapter.NavDrawerItem;
 import net.geekstools.floatshort.PRO.Util.NavAdapter.RecycleViewSmoothLayoutGrid;
-import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryCategory;
+import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryFolders;
 import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryShortcuts;
 import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryWidgets;
 import net.geekstools.floatshort.PRO.Util.SettingGUI.SettingGUIDark;
@@ -97,7 +97,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
     RelativeLayout wholeWidget, fullActionViews;
     ImageView addWidget,
             actionButton, recoverFloatingCategories, recoverFloatingApps;
-    MaterialButton switchApps, switchCategories, recoveryAction, automationAction;
+    MaterialButton switchApps, switchCategories, recoveryAction, automationAction,
+            reconfigure;
 
     RecyclerView installedWidgetsLoadView, configuredWidgetsLoadView;
     ScrollView installedWidgetsNestedScrollView, configuredWidgetsNestedScrollView,
@@ -137,13 +138,23 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
 
     boolean installedWidgetsLoaded = false, configuredWidgetAvailable = false;
 
+    public static boolean alreadyAuthenticated = false;
+
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.widget_configurations_views);
-        PublicVariable.eligibleLoadShowAds = true;
 
         functionsClass = new FunctionsClass(getApplicationContext(), WidgetConfigurations.this);
+
+        if (!functionsClass.readPreference("WidgetsInformation", "Reallocated", true) && getDatabasePath(PublicVariable.WIDGET_DATA_DATABASE_NAME).exists()) {
+            startActivity(new Intent(getApplicationContext(), WidgetsReallocationProcess.class),
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), android.R.anim.fade_in, android.R.anim.fade_out).toBundle());
+
+            finish();
+            return;
+        }
 
         wholeWidget = (RelativeLayout) findViewById(R.id.wholeWidget);
         fullActionViews = (RelativeLayout) findViewById(R.id.fullActionViews);
@@ -164,6 +175,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         automationAction = (MaterialButton) findViewById(R.id.automationAction);
         recoverFloatingCategories = (ImageView) findViewById(R.id.recoverFloatingCategories);
         recoverFloatingApps = (ImageView) findViewById(R.id.recoverFloatingApps);
+        reconfigure = (MaterialButton) findViewById(R.id.reconfigure);
 
         nestedIndexScrollView = (ScrollView) findViewById(R.id.nestedIndexScrollView);
         installedNestedIndexScrollView = (ScrollView) findViewById(R.id.installedNestedIndexScrollView);
@@ -217,6 +229,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
             LoadConfiguredWidgets loadConfiguredWidgets = new LoadConfiguredWidgets();
             loadConfiguredWidgets.execute();
         } else {
+            reconfigure.setVisibility(View.INVISIBLE);
+
             actionButton.bringToFront();
             addWidget.bringToFront();
 
@@ -447,7 +461,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
             @Override
             public void onClick(View view) {
                 try {
-                    functionsClass.navigateToClass(CategoryHandler.class,
+                    functionsClass.navigateToClass(FoldersHandler.class,
                             ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_from_left, R.anim.slide_to_right));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -482,7 +496,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         recoverFloatingCategories.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RecoveryCategory.class);
+                Intent intent = new Intent(getApplicationContext(), RecoveryFolders.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startService(intent);
 
@@ -657,10 +671,6 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("FORCE_RELOAD");
-        /*Free Functions*/
-        intentFilter.addAction("SHOW_ADS_ICON_FORCE_RELOAD");
-        intentFilter.addAction("HIDE_ADS_ICON_FORCE_RELOAD");
-        /*Free Functions*/
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -675,15 +685,6 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     LoadConfiguredWidgets loadConfiguredWidgets = new LoadConfiguredWidgets();
                     loadConfiguredWidgets.execute();
                 }
-                /*Free Functions*/
-                else if (intent.getAction().equals("SHOW_ADS_ICON_FORCE_RELOAD")) {
-                    LoadConfiguredWidgetsWithShowAdsIcon loadConfiguredWidgetsWithShowAdsIcon = new LoadConfiguredWidgetsWithShowAdsIcon();
-                    loadConfiguredWidgetsWithShowAdsIcon.execute();
-                } else if (intent.getAction().equals("HIDE_ADS_ICON_FORCE_RELOAD")) {
-                    LoadConfiguredWidgetsWithHideAdsIcon loadConfiguredWidgetsWithHideAdsIcon = new LoadConfiguredWidgetsWithHideAdsIcon();
-                    loadConfiguredWidgetsWithHideAdsIcon.execute();
-                }
-                /*Free Functions*/
             }
         };
         registerReceiver(broadcastReceiver, intentFilter);
@@ -692,6 +693,16 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
     @Override
     public void onStart() {
         super.onStart();
+
+        reconfigure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), WidgetsReallocationProcess.class),
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), android.R.anim.fade_in, android.R.anim.fade_out).toBundle());
+
+                finish();
+            }
+        });
 
         addWidget.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -850,7 +861,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         PublicVariable.eligibleLoadShowAds = true;
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        firebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+        firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_default);
         firebaseRemoteConfig.fetch(0)
                 .addOnCompleteListener(WidgetConfigurations.this, new OnCompleteListener<Void>() {
                     @Override
@@ -992,7 +1003,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         switch (direction) {
             case SimpleGestureFilterSwitch.SWIPE_RIGHT: {
                 try {
-                    functionsClass.navigateToClass(CategoryHandler.class,
+                    functionsClass.navigateToClass(FoldersHandler.class,
                             ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_from_left, R.anim.slide_to_right));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1033,8 +1044,11 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                         public void run() {
 
                             WidgetDataModel widgetDataModel = new WidgetDataModel(
+                                    System.currentTimeMillis(),
                                     appWidgetId,
                                     InstalledWidgetsAdapter.pickedWidgetPackageName,
+                                    InstalledWidgetsAdapter.pickedWidgetClassNameProvider,
+                                    InstalledWidgetsAdapter.pickedWidgetConfigClassName,
                                     functionsClass.appName(InstalledWidgetsAdapter.pickedWidgetPackageName),
                                     InstalledWidgetsAdapter.pickedWidgetLabel,
                                     false
@@ -1075,18 +1089,23 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
                     AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
                     if (appWidgetInfo.configure != null) {
+
                         Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_CONFIGURE);
                         intent.setComponent(appWidgetInfo.configure);
                         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
                         startActivityForResult(intent, InstalledWidgetsAdapter.SYSTEM_WIDGET_PICKER_CONFIGURATION);
+
                     } else {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
 
                                 WidgetDataModel widgetDataModel = new WidgetDataModel(
+                                        System.currentTimeMillis(),
                                         appWidgetId,
                                         appWidgetInfo.provider.getPackageName(),
+                                        InstalledWidgetsAdapter.pickedWidgetClassNameProvider,
+                                        InstalledWidgetsAdapter.pickedWidgetConfigClassName,
                                         functionsClass.appName(appWidgetInfo.provider.getPackageName()),
                                         appWidgetInfo.loadLabel(getPackageManager()),
                                         false
@@ -1123,6 +1142,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     break;
                 }
                 case InstalledWidgetsAdapter.SYSTEM_WIDGET_PICKER_CONFIGURATION: {
+
                     Bundle extras = data.getExtras();
                     int appWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, -1);
                     AppWidgetProviderInfo appWidgetInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
@@ -1132,8 +1152,11 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                         public void run() {
 
                             WidgetDataModel widgetDataModel = new WidgetDataModel(
+                                    System.currentTimeMillis(),
                                     appWidgetId,
                                     appWidgetInfo.provider.getPackageName(),
+                                    InstalledWidgetsAdapter.pickedWidgetClassNameProvider,
+                                    InstalledWidgetsAdapter.pickedWidgetConfigClassName,
                                     functionsClass.appName(appWidgetInfo.provider.getPackageName()),
                                     appWidgetInfo.loadLabel(getPackageManager()),
                                     false
@@ -1170,7 +1193,6 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                 }
             }
         }
-
     }
 
     public class LoadConfiguredWidgets extends AsyncTask<Void, Void, Boolean> {
@@ -1248,6 +1270,10 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     try {
                         int appWidgetId = widgetDataModel.getWidgetId();
                         String packageName = widgetDataModel.getPackageName();
+                        String className = widgetDataModel.getClassNameProvider();
+                        String configClassName = widgetDataModel.getConfigClassName();
+
+                        FunctionsClassDebug.Companion.PrintDebug("*** " + appWidgetId + " *** PackageName: " + packageName + " - ClassName: " + className + " - Configure: " + configClassName + " ***");
 
                         if (functionsClass.appIsInstalled(packageName)) {
                             AppWidgetProviderInfo appWidgetProviderInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
@@ -1270,6 +1296,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                             configuredWidgetsNavDrawerItems.add(new NavDrawerItem(
                                     newAppName,
                                     packageName,
+                                    className,
+                                    configClassName,
                                     widgetDataModel.getWidgetLabel(),
                                     appIcon,
                                     appWidgetProviderInfo,
@@ -1279,7 +1307,7 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
 
                             widgetIndex++;
                         } else {
-                            widgetDataInterface.initDataAccessObject().deleteByWidgetId(appWidgetId);
+                            widgetDataInterface.initDataAccessObject().deleteByWidgetClassNameProviderWidget(packageName, className);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1306,6 +1334,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
             if (result) {
+                reconfigure.setVisibility(View.VISIBLE);
+
                 configuredWidgetsRecyclerViewAdapter.notifyDataSetChanged();
                 WidgetSectionedGridRecyclerViewAdapter.Section[] sectionsData = new WidgetSectionedGridRecyclerViewAdapter.Section[configuredWidgetsSections.size()];
                 configuredWidgetsSectionedGridRecyclerViewAdapter = new WidgetSectionedGridRecyclerViewAdapter(
@@ -1329,6 +1359,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                     }
                 }, 333);
             } else {
+                reconfigure.setVisibility(View.INVISIBLE);
+
                 installedWidgetsLoaded = false;
                 addWidget.animate().scaleXBy(0.23f).scaleYBy(0.23f).setDuration(223).setListener(scaleUpListener);
                 loadingSplash.setVisibility(View.VISIBLE);
@@ -1374,12 +1406,12 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                 if (functionsClass.loadCustomIcons()) {
                     loadCustomIcons.load();
                     FunctionsClassDebug.Companion.PrintDebug("*** Total Custom Icon ::: " + loadCustomIcons.getTotalIcons());
-                    FunctionsClassDebug.Companion.PrintDebug("*** Total Custom Icon ::: " + loadCustomIcons.getTotalIcons());
                 }
 
                 String oldAppName = "";
                 int widgetIndex = 0;
                 for (AppWidgetProviderInfo appWidgetProviderInfo : widgetProviderInfoList) {
+                    FunctionsClassDebug.Companion.PrintDebug("*** Provider = " + appWidgetProviderInfo.provider + " | Config = " + appWidgetProviderInfo.configure + " ***");
                     try {
                         String packageName = appWidgetProviderInfo.provider.getPackageName();
                         String newAppName = functionsClass.appName(packageName);
@@ -1403,6 +1435,8 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
                         indexListInstalled.add(newAppName.substring(0, 1).toUpperCase());
                         installedWidgetsNavDrawerItems.add(new NavDrawerItem(functionsClass.appName(appWidgetProviderInfo.provider.getPackageName()),
                                 appWidgetProviderInfo.provider.getPackageName(),
+                                appWidgetProviderInfo.provider.getClassName(),
+                                (appWidgetProviderInfo.configure != null) ? appWidgetProviderInfo.configure.getClassName() : null,
                                 (widgetLabel != null) ? widgetLabel : newAppName,
                                 newAppIcon,
                                 (widgetPreviewDrawable != null) ? widgetPreviewDrawable : appWidgetProviderInfo.loadIcon(getApplicationContext(), DisplayMetrics.DENSITY_HIGH),
@@ -1687,221 +1721,6 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
         }
     }
 
-
-
-    /*Free Functions*/
-    public class LoadConfiguredWidgetsWithShowAdsIcon extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            try {
-                configuredWidgetsNavDrawerItems.clear();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            configuredWidgetsNavDrawerItems.clear();
-
-            configuredWidgetAvailable = false;
-            try {
-                if (functionsClass.loadCustomIcons()) {
-                    loadCustomIcons.load();
-                    FunctionsClassDebug.Companion.PrintDebug("*** Total Custom Icon ::: " + loadCustomIcons.getTotalIcons());
-                }
-
-                WidgetDataInterface widgetDataInterface = Room.databaseBuilder(getApplicationContext(), WidgetDataInterface.class, PublicVariable.WIDGET_DATA_DATABASE_NAME)
-                        .fallbackToDestructiveMigration()
-                        .addCallback(new RoomDatabase.Callback() {
-                            @Override
-                            public void onCreate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
-                                super.onCreate(supportSQLiteDatabase);
-                            }
-
-                            @Override
-                            public void onOpen(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
-                                super.onOpen(supportSQLiteDatabase);
-
-                            }
-                        })
-                        .build();
-
-                List<WidgetDataModel> widgetDataModels = widgetDataInterface.initDataAccessObject().getAllWidgetData();
-
-                String oldAppName = "";
-                int widgetIndex = 0;
-                for (WidgetDataModel widgetDataModel : widgetDataModels) {
-                    try {
-                        int appWidgetId = widgetDataModel.getWidgetId();
-                        String packageName = widgetDataModel.getPackageName();
-
-                        if (functionsClass.appIsInstalled(packageName)) {
-                            AppWidgetProviderInfo appWidgetProviderInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
-                            String newAppName = functionsClass.appName(packageName);
-                            Drawable appIcon = functionsClass.loadCustomIcons() ? loadCustomIcons.getDrawableIconForPackage(packageName, functionsClass.shapedAppIcon(packageName)) : functionsClass.shapedAppIcon(packageName);
-
-                            if (widgetIndex == 0) {
-                                configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
-                                indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
-                            } else {
-                                if (!oldAppName.equals(newAppName)) {
-                                    configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
-                                    indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
-                                }
-                            }
-
-                            oldAppName = functionsClass.appName(packageName);
-
-                            indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
-                            configuredWidgetsNavDrawerItems.add(new NavDrawerItem(
-                                    newAppName,
-                                    packageName,
-                                    " 📺 " + widgetDataModel.getWidgetLabel(),
-                                    appIcon,
-                                    appWidgetProviderInfo,
-                                    appWidgetId,
-                                    widgetDataModel.getRecovery()
-                            ));
-
-                            widgetIndex++;
-                        } else {
-                            widgetDataInterface.initDataAccessObject().deleteByWidgetId(appWidgetId);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                widgetDataInterface.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            try {
-                configuredWidgetsRecyclerViewAdapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public class LoadConfiguredWidgetsWithHideAdsIcon extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            try {
-                configuredWidgetsNavDrawerItems.clear();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            configuredWidgetsNavDrawerItems.clear();
-
-            configuredWidgetAvailable = false;
-            try {
-                if (functionsClass.loadCustomIcons()) {
-                    loadCustomIcons.load();
-                    FunctionsClassDebug.Companion.PrintDebug("*** Total Custom Icon ::: " + loadCustomIcons.getTotalIcons());
-                }
-
-                WidgetDataInterface widgetDataInterface = Room.databaseBuilder(getApplicationContext(), WidgetDataInterface.class, PublicVariable.WIDGET_DATA_DATABASE_NAME)
-                        .fallbackToDestructiveMigration()
-                        .addCallback(new RoomDatabase.Callback() {
-                            @Override
-                            public void onCreate(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
-                                super.onCreate(supportSQLiteDatabase);
-                            }
-
-                            @Override
-                            public void onOpen(@NonNull SupportSQLiteDatabase supportSQLiteDatabase) {
-                                super.onOpen(supportSQLiteDatabase);
-
-                            }
-                        })
-                        .build();
-
-                List<WidgetDataModel> widgetDataModels = widgetDataInterface.initDataAccessObject().getAllWidgetData();
-
-                String oldAppName = "";
-                int widgetIndex = 0;
-                for (WidgetDataModel widgetDataModel : widgetDataModels) {
-                    try {
-                        int appWidgetId = widgetDataModel.getWidgetId();
-                        String packageName = widgetDataModel.getPackageName();
-
-                        if (functionsClass.appIsInstalled(packageName)) {
-                            AppWidgetProviderInfo appWidgetProviderInfo = appWidgetManager.getAppWidgetInfo(appWidgetId);
-                            String newAppName = functionsClass.appName(packageName);
-                            Drawable appIcon = functionsClass.loadCustomIcons() ? loadCustomIcons.getDrawableIconForPackage(packageName, functionsClass.shapedAppIcon(packageName)) : functionsClass.shapedAppIcon(packageName);
-
-                            if (widgetIndex == 0) {
-                                configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
-                                indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
-                            } else {
-                                if (!oldAppName.equals(newAppName)) {
-                                    configuredWidgetsSections.add(new WidgetSectionedGridRecyclerViewAdapter.Section(widgetIndex, newAppName, appIcon));
-                                    indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
-                                }
-                            }
-
-                            oldAppName = functionsClass.appName(packageName);
-
-                            indexListConfigured.add(newAppName.substring(0, 1).toUpperCase());
-                            configuredWidgetsNavDrawerItems.add(new NavDrawerItem(
-                                    newAppName,
-                                    packageName,
-                                    widgetDataModel.getWidgetLabel(),
-                                    appIcon,
-                                    appWidgetProviderInfo,
-                                    appWidgetId,
-                                    widgetDataModel.getRecovery()
-                            ));
-
-                            widgetIndex++;
-                        } else {
-                            widgetDataInterface.initDataAccessObject().deleteByWidgetId(appWidgetId);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                widgetDataInterface.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            try {
-                configuredWidgetsRecyclerViewAdapter.notifyDataSetChanged();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    /*Free Functions*/
-
-
     public static void createWidget(Context context, ViewGroup widgetView, AppWidgetManager appWidgetManager, AppWidgetHost appWidgetHost, AppWidgetProviderInfo appWidgetProviderInfo, int widgetId) {
         try {
             widgetView.removeAllViews();
@@ -1926,8 +1745,6 @@ public class WidgetConfigurations extends Activity implements SimpleGestureFilte
             appWidgetManager.bindAppWidgetIdIfAllowed(widgetId, appWidgetProviderInfo.provider, bundle);
 
             widgetView.addView(hostView);
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

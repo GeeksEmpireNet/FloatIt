@@ -144,7 +144,7 @@ import net.geekstools.floatshort.PRO.Automation.Apps.AppAutoFeatures;
 import net.geekstools.floatshort.PRO.Automation.Categories.CategoryAutoFeatures;
 import net.geekstools.floatshort.PRO.BindServices;
 import net.geekstools.floatshort.PRO.BuildConfig;
-import net.geekstools.floatshort.PRO.Category.CategoryHandler;
+import net.geekstools.floatshort.PRO.Category.FoldersHandler;
 import net.geekstools.floatshort.PRO.Category_Unlimited_Bluetooth;
 import net.geekstools.floatshort.PRO.Category_Unlimited_Floating;
 import net.geekstools.floatshort.PRO.Category_Unlimited_Gps;
@@ -214,9 +214,8 @@ public class FunctionsClass {
             interstitialAdSettingsGUI;
 
     /*Free Floating Widgets*/
-    public static String packageNameWidget, shortcutNameWidget;
+    public static String packageNameWidget, widgetProviderClassName, shortcutNameWidget;
     public static Drawable widgetPreviewDrawable;
-    public static int shortcutIdWidget;
 
     public FunctionsClass(final Context context, final Activity activity) {
         this.context = context;
@@ -229,7 +228,7 @@ public class FunctionsClass {
         String ClassName = activity.getComponentName().getClassName();
 
         if (ClassName.contains(HybridViewOff.class.getSimpleName())
-                || ClassName.contains(CategoryHandler.class.getSimpleName())
+                || ClassName.contains(FoldersHandler.class.getSimpleName())
                 || ClassName.contains(CategoryAutoFeatures.class.getSimpleName())
                 || ClassName.contains(AppAutoFeatures.class.getSimpleName())) {
             if (LoadAds()) {
@@ -315,8 +314,8 @@ public class FunctionsClass {
 
                             if (PublicVariable.targetClassAfterAds != null) {
                                 Intent intentTarget = new Intent();
-                                if (PublicVariable.targetClassAfterAds.equals(CategoryHandler.class.getSimpleName())) {
-                                    intentTarget.setClass(context, CategoryHandler.class);
+                                if (PublicVariable.targetClassAfterAds.equals(FoldersHandler.class.getSimpleName())) {
+                                    intentTarget.setClass(context, FoldersHandler.class);
                                 } else if (PublicVariable.targetClassAfterAds.equals(SettingGUIDark.class.getSimpleName())) {
                                     intentTarget.setClass(context, SettingGUIDark.class);
                                 } else if (PublicVariable.targetClassAfterAds.equals(SettingGUILight.class.getSimpleName())) {
@@ -354,7 +353,7 @@ public class FunctionsClass {
             final PreferenceActivity preferenceActivity = ((PreferenceActivity) activity);
 
             firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-            firebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+            firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_default);
             firebaseRemoteConfig.fetch(0)
                     .addOnCompleteListener(activity, new OnCompleteListener<Void>() {
                         @Override
@@ -508,7 +507,7 @@ public class FunctionsClass {
                         @Override
                         public void run() {
                             try {
-                                widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageNameWidget, shortcutNameWidget, widgetPreviewDrawable, shortcutIdWidget);
+                                widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageNameWidget, shortcutNameWidget, widgetPreviewDrawable, widgetProviderClassName);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -2266,7 +2265,7 @@ public class FunctionsClass {
             });
 
             String neutralButtonText;
-            if (betaChangeLog.equals(context.getPackageName())) {
+            if (betaChangeLog.contains(context.getPackageName())) {
                 neutralButtonText = context.getString(R.string.shareit);
             } else {
                 neutralButtonText = context.getString(R.string.betaUpdate);
@@ -2584,8 +2583,8 @@ public class FunctionsClass {
     }
 
     public void overrideBackPress(final Activity activityToFinish) throws Exception {
-        if (readPreference("OpenMode", "openClassName", HybridViewOff.class.getSimpleName()).equals(CategoryHandler.class.getSimpleName())) {
-            Intent categoryIntent = new Intent(context, CategoryHandler.class);
+        if (readPreference("OpenMode", "openClassName", HybridViewOff.class.getSimpleName()).equals(FoldersHandler.class.getSimpleName())) {
+            Intent categoryIntent = new Intent(context, FoldersHandler.class);
             activity.startActivity(categoryIntent);
         } else {
             Intent hybridViewOff = new Intent(context, HybridViewOff.class);
@@ -2603,8 +2602,8 @@ public class FunctionsClass {
     }
 
     public void overrideBackPressToMain(final Activity activityToFinish) throws Exception {
-        if (readPreference("OpenMode", "openClassName", HybridViewOff.class.getSimpleName()).equals(CategoryHandler.class.getSimpleName())) {
-            Intent categoryInten = new Intent(context, CategoryHandler.class);
+        if (readPreference("OpenMode", "openClassName", HybridViewOff.class.getSimpleName()).equals(FoldersHandler.class.getSimpleName())) {
+            Intent categoryInten = new Intent(context, FoldersHandler.class);
             activity.startActivity(categoryInten);
         } else {
             Intent hybridViewOff = new Intent(context, HybridViewOff.class);
@@ -4628,7 +4627,7 @@ public class FunctionsClass {
         popupMenu.show();
     }
 
-    public void popupOptionWidget(Activity activity, final Context context, View anchorView, String packageName, final int appWidgetId, String widgetLabel, Drawable widgetPreview, boolean addedWidgetRecovery) {
+    public void popupOptionWidget(final Context context, View anchorView, String packageName, final String providerClassName, String widgetLabel, Drawable widgetPreview, boolean addedWidgetRecovery) {
         PopupMenu popupMenu = new PopupMenu(context, anchorView, Gravity.CENTER);
         if (PublicVariable.themeLightDark == true) {
             popupMenu = new PopupMenu(context, anchorView, Gravity.CENTER, 0, R.style.GeeksEmpire_Dialogue_Category_Light);
@@ -4704,7 +4703,7 @@ public class FunctionsClass {
                                                         context.sendBroadcast(new Intent("FORCE_RELOAD"));
 
                                                         try {
-                                                            removeWidgetHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageName, widgetLabel, widgetPreview, appWidgetId);
+                                                            removeWidgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageName, widgetLabel, widgetPreview, providerClassName);
                                                         } catch (Exception e) {
                                                             e.printStackTrace();
                                                         }
@@ -4713,12 +4712,12 @@ public class FunctionsClass {
                                             }
                                         })
                                         .build();
-                                widgetDataInterface.initDataAccessObject().deleteByWidgetId(appWidgetId);
+                                widgetDataInterface.initDataAccessObject().deleteByWidgetClassNameProviderWidget(packageName, providerClassName);
                                 widgetDataInterface.close();
                             }
                         }).start();
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            context.deleteSharedPreferences(appWidgetId + packageName);
+                            context.deleteSharedPreferences(providerClassName + packageName);
                         }
 
                         break;
@@ -4742,7 +4741,7 @@ public class FunctionsClass {
                                             }
                                         })
                                         .build();
-                                widgetDataInterface.initDataAccessObject().updateRecoveryByWidgetId(appWidgetId, !addedWidgetRecovery);
+                                widgetDataInterface.initDataAccessObject().updateRecoveryByClassNameProviderWidget(packageName, providerClassName, !addedWidgetRecovery);
                                 widgetDataInterface.close();
                             }
                         }).start();
@@ -4755,7 +4754,7 @@ public class FunctionsClass {
                             packageNameWidget = packageName;
                             shortcutNameWidget = widgetLabel;
                             widgetPreviewDrawable = widgetPreview;
-                            shortcutIdWidget = appWidgetId;
+                            widgetProviderClassName = providerClassName;
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -4765,7 +4764,7 @@ public class FunctionsClass {
                             }, 333);
                         } else {
                             try {
-                                widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageName, widgetLabel, widgetPreview, appWidgetId);
+                                widgetToHomeScreen(FloatingWidgetHomeScreenShortcuts.class, packageName, widgetLabel, widgetPreview, providerClassName);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -4990,13 +4989,53 @@ public class FunctionsClass {
         }
     }
 
-    public void widgetToHomeScreen(Class className, String packageName, String shortcutName, Drawable widgetPreviewDrawable, int shortcutId) throws Exception {
-        FunctionsClassDebug.Companion.PrintDebug("*** Widget To Home Screen ***");
+    public void removeWidgetToHomeScreen(Class className, String packageName, String shortcutName, Drawable widgetPreviewDrawable, String providerClassName) throws Exception {
+        Intent differentIntent = new Intent(context, className);
+        differentIntent.setAction(Intent.ACTION_MAIN);
+        differentIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        differentIntent.putExtra("ShortcutsId", providerClassName);
+        differentIntent.putExtra("ShortcutLabel", shortcutName);
 
+        Drawable forNull = context.getDrawable(R.drawable.ic_launcher);
+        forNull.setAlpha(0);
+        LayerDrawable widgetShortcutIcon = (LayerDrawable) context.getDrawable(R.drawable.widget_home_screen_shortcuts);
+        try {
+            widgetShortcutIcon.setDrawableByLayerId(R.id.one, widgetPreviewDrawable);
+        } catch (Exception e) {
+            widgetShortcutIcon.setDrawableByLayerId(R.id.one, forNull);
+        }
+        try {
+            if (widgetPreviewDrawable.getIntrinsicHeight() < DpToInteger(52)) {
+
+            } else {
+                widgetShortcutIcon.setDrawableByLayerId(R.id.two, getAppIconDrawableCustomIcon(packageName));
+            }
+        } catch (Exception e) {
+            widgetShortcutIcon.setDrawableByLayerId(R.id.two, forNull);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            List<String> shortcutToDelete = new ArrayList<String>();
+            shortcutToDelete.add((packageName + providerClassName));
+
+            context.getSystemService(ShortcutManager.class).disableShortcuts(shortcutToDelete);
+        } else {
+            Intent removeIntent = new Intent();
+            removeIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, differentIntent);
+            removeIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
+            removeIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON, layerDrawableToBitmap(widgetShortcutIcon));
+            removeIntent.putExtra("duplicate", true);
+            removeIntent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+            context.sendBroadcast(removeIntent);
+        }
+    }
+
+    public void widgetToHomeScreen(Class className, String packageName, String shortcutName, Drawable widgetPreviewDrawable, String providerClassName) throws Exception {
         Intent differentIntent = new Intent(context, className);
         differentIntent.setAction("CREATE_FLOATING_WIDGET_HOME_SCREEN_SHORTCUTS");
         differentIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        differentIntent.putExtra("ShortcutsId", shortcutId);
+        differentIntent.putExtra("PackageName", packageName);
+        differentIntent.putExtra("ProviderClassName", providerClassName);
         differentIntent.putExtra("ShortcutLabel", shortcutName);
 
         Drawable forNull = context.getDrawable(R.drawable.ic_launcher);
@@ -5018,7 +5057,7 @@ public class FunctionsClass {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(context, String.valueOf(shortcutId))
+            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(context, (packageName + providerClassName))
                     .setShortLabel(shortcutName)
                     .setLongLabel(shortcutName)
                     .setIcon(Icon.createWithBitmap(layerDrawableToBitmap(widgetShortcutIcon)))

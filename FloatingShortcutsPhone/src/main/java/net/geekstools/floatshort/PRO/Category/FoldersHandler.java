@@ -84,7 +84,7 @@ import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;
 import net.geekstools.floatshort.PRO.Util.IAP.InAppBilling;
 import net.geekstools.floatshort.PRO.Util.LicenseValidator;
 import net.geekstools.floatshort.PRO.Util.NavAdapter.NavDrawerItem;
-import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryCategory;
+import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryFolders;
 import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryShortcuts;
 import net.geekstools.floatshort.PRO.Util.RemoteTask.RecoveryWidgets;
 import net.geekstools.floatshort.PRO.Util.SettingGUI.SettingGUIDark;
@@ -97,7 +97,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryHandler extends Activity implements View.OnClickListener, View.OnLongClickListener, SimpleGestureFilterSwitch.SimpleGestureListener {
+public class FoldersHandler extends Activity implements View.OnClickListener, View.OnLongClickListener, SimpleGestureFilterSwitch.SimpleGestureListener {
 
     FunctionsClass functionsClass;
 
@@ -151,7 +151,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
 
         simpleGestureFilterSwitch = new SimpleGestureFilterSwitch(getApplicationContext(), this);
         functionsClass = new FunctionsClass(getApplicationContext(), this);
-        functionsClass.ChangeLog(CategoryHandler.this, false);
+        functionsClass.ChangeLog(FoldersHandler.this, false);
 
         if (functionsClass.appThemeTransparent() == true) {
             functionsClass.setThemeColorFloating(wholeCategory, true);
@@ -434,7 +434,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
         recoveryAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), RecoveryCategory.class);
+                Intent intent = new Intent(getApplicationContext(), RecoveryFolders.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startService(intent);
             }
@@ -501,13 +501,13 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
                     @Override
                     public void run() {
                         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.
-                                makeSceneTransitionAnimation(CategoryHandler.this, actionButton, "transition");
+                                makeSceneTransitionAnimation(FoldersHandler.this, actionButton, "transition");
                         Intent intent = new Intent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         if (PublicVariable.themeLightDark) {
-                            intent.setClass(CategoryHandler.this, SettingGUILight.class);
+                            intent.setClass(FoldersHandler.this, SettingGUILight.class);
                         } else if (!PublicVariable.themeLightDark) {
-                            intent.setClass(CategoryHandler.this, SettingGUIDark.class);
+                            intent.setClass(FoldersHandler.this, SettingGUIDark.class);
                         }
                         startActivity(intent, activityOptionsCompat.toBundle());
                     }
@@ -612,7 +612,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
         //Consume Donation
         try {
             if (functionsClass.alreadyDonated() && functionsClass.networkConnection()) {
-                BillingClient billingClient = BillingClient.newBuilder(CategoryHandler.this).setListener(new PurchasesUpdatedListener() {
+                BillingClient billingClient = BillingClient.newBuilder(FoldersHandler.this).setListener(new PurchasesUpdatedListener() {
                     @Override
                     public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
                         if (responseCode == BillingClient.BillingResponse.OK && purchases != null) {
@@ -664,7 +664,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
         //Restore Subscribed Item
         try {
             if (functionsClass.networkConnection()) {
-                BillingClient billingClient = BillingClient.newBuilder(CategoryHandler.this).setListener(new PurchasesUpdatedListener() {
+                BillingClient billingClient = BillingClient.newBuilder(FoldersHandler.this).setListener(new PurchasesUpdatedListener() {
                     @Override
                     public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
                         if (responseCode == BillingClient.BillingResponse.OK && purchases != null) {
@@ -713,7 +713,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(getString(R.string.license))) {
-                    functionsClass.dialogueLicense(CategoryHandler.this);
+                    functionsClass.dialogueLicense(FoldersHandler.this);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -785,7 +785,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
                     Intent signInIntent = googleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, 666);
 
-                    progressDialog = new ProgressDialog(CategoryHandler.this,
+                    progressDialog = new ProgressDialog(FoldersHandler.this,
                             PublicVariable.themeLightDark ? R.style.GeeksEmpire_Dialogue_Light : R.style.GeeksEmpire_Dialogue_Dark);
                     progressDialog.setMessage(Html.fromHtml(
                             "<big><font color='" + PublicVariable.colorLightDarkOpposite + "'>" + getString(R.string.signinTitle) + "</font></big>"
@@ -843,10 +843,10 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
         PublicVariable.eligibleLoadShowAds = true;
 
         firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
-        firebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+        firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_default);
 
         firebaseRemoteConfig.fetch(0)
-                .addOnCompleteListener(CategoryHandler.this, new OnCompleteListener<Void>() {
+                .addOnCompleteListener(FoldersHandler.this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
@@ -865,7 +865,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
                                             @Override
                                             public void onClick(View view) {
                                                 functionsClass.upcomingChangeLog(
-                                                        CategoryHandler.this,
+                                                        FoldersHandler.this,
                                                         firebaseRemoteConfig.getString(functionsClass.upcomingChangeLogRemoteConfigKey()),
                                                         String.valueOf(firebaseRemoteConfig.getLong(functionsClass.versionCodeRemoteConfigKey()))
                                                 );
@@ -905,7 +905,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
         }
 
         functionsClass.savePreference("OpenMode", "openClassName", this.getClass().getSimpleName());
-        functionsClass.CheckSystemRAM(CategoryHandler.this);
+        functionsClass.CheckSystemRAM(FoldersHandler.this);
     }
 
     @Override
@@ -1123,7 +1123,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
                             }
                         }
                         navDrawerItems.add(new NavDrawerItem(getPackageName(), new String[]{getPackageName()}));
-                        categoryListAdapter = new CategoryListAdapter(CategoryHandler.this, getApplicationContext(), navDrawerItems);
+                        categoryListAdapter = new CategoryListAdapter(FoldersHandler.this, getApplicationContext(), navDrawerItems);
                     } catch (Exception e) {
                         e.printStackTrace();
                         this.cancel(true);
@@ -1131,7 +1131,7 @@ public class CategoryHandler extends Activity implements View.OnClickListener, V
                 } else {
                     navDrawerItems = new ArrayList<NavDrawerItem>();
                     navDrawerItems.add(new NavDrawerItem(getPackageName(), new String[]{getPackageName()}));
-                    categoryListAdapter = new CategoryListAdapter(CategoryHandler.this, getApplicationContext(), navDrawerItems);
+                    categoryListAdapter = new CategoryListAdapter(FoldersHandler.this, getApplicationContext(), navDrawerItems);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

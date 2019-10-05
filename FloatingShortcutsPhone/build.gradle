@@ -14,8 +14,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 29
 
-        versionCode 678
-        versionName "15.000.000.678_"
+        versionCode 680
+        versionName "15.310.000.680_"
 
         wearAppUnbundled true
     }
@@ -57,12 +57,16 @@ android {
     }
 }
 dependencies {
+    implementation project(path: ':LoadingSpin')
+
     implementation project(path: ':LicenseLibrary', configuration: 'default')
     implementation project(path: ':ShapesCustomImageViewLibrary', configuration: 'default')
 
     implementation 'com.android.billingclient:billing:1.2.2'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference-ktx:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0-beta04'
