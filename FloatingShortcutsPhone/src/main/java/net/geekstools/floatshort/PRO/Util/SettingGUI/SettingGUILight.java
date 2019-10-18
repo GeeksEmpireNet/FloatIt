@@ -18,7 +18,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -535,8 +534,8 @@ public class SettingGUILight extends PreferenceActivity implements OnSharedPrefe
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {
                         LayerDrawable drawPrefAutoTrans = (LayerDrawable) getDrawable(R.drawable.draw_pref).mutate();
-                        GradientDrawable backPrefAutoTrans = (GradientDrawable) drawPrefAutoTrans.findDrawableByLayerId(R.id.backtemp).mutate();
-                        backPrefAutoTrans.setColor(PublicVariable.primaryColor);
+                        Drawable backPrefAutoTrans = drawPrefAutoTrans.findDrawableByLayerId(R.id.backtemp).mutate();
+                        backPrefAutoTrans.setTint(PublicVariable.primaryColor);
                         backPrefAutoTrans.setAlpha(functionsClass.readDefaultPreference("autoTrans", 255));
                         autotrans.setIcon(drawPrefAutoTrans);
 
@@ -923,33 +922,33 @@ public class SettingGUILight extends PreferenceActivity implements OnSharedPrefe
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
         LayerDrawable drawSmart = (LayerDrawable) getDrawable(R.drawable.draw_smart);
-        GradientDrawable backSmart = (GradientDrawable) drawSmart.findDrawableByLayerId(R.id.backtemp);
+        Drawable backSmart = drawSmart.findDrawableByLayerId(R.id.backtemp);
 
         LayerDrawable drawPref = (LayerDrawable) getDrawable(R.drawable.draw_pref);
-        GradientDrawable backPref = (GradientDrawable) drawPref.findDrawableByLayerId(R.id.backtemp);
+        Drawable backPref = drawPref.findDrawableByLayerId(R.id.backtemp);
 
         LayerDrawable drawPrefAutoTrans = (LayerDrawable) getDrawable(R.drawable.draw_pref).mutate();
-        GradientDrawable backPrefAutoTrans = (GradientDrawable) drawPrefAutoTrans.findDrawableByLayerId(R.id.backtemp).mutate();
+        Drawable backPrefAutoTrans = drawPrefAutoTrans.findDrawableByLayerId(R.id.backtemp).mutate();
 
         LayerDrawable drawPrefLite = (LayerDrawable) getDrawable(R.drawable.draw_pref).mutate();
-        GradientDrawable backPrefLite = (GradientDrawable) drawPrefLite.findDrawableByLayerId(R.id.backtemp).mutate();
+        Drawable backPrefLite = drawPrefLite.findDrawableByLayerId(R.id.backtemp).mutate();
         Drawable drawablePrefLite = drawPrefLite.findDrawableByLayerId(R.id.wPref);
-        backPrefLite.setColor(getColor(R.color.dark));
+        backPrefLite.setTint(getColor(R.color.dark));
         drawablePrefLite.setTint(getColor(R.color.light));
         lite.setIcon(drawPrefLite);
 
         LayerDrawable drawFloatIt = (LayerDrawable) getDrawable(R.drawable.draw_floatit);
-        GradientDrawable backFloatIt = (GradientDrawable) drawFloatIt.findDrawableByLayerId(R.id.backtemp);
+        Drawable backFloatIt = drawFloatIt.findDrawableByLayerId(R.id.backtemp);
 
         LayerDrawable drawSupport = (LayerDrawable) getDrawable(R.drawable.draw_support);
-        GradientDrawable backSupport = (GradientDrawable) drawSupport.findDrawableByLayerId(R.id.backtemp);
+        Drawable backSupport = drawSupport.findDrawableByLayerId(R.id.backtemp);
 
-        backSmart.setColor(PublicVariable.primaryColor);
-        backPref.setColor(PublicVariable.primaryColor);
-        backPrefAutoTrans.setColor(PublicVariable.primaryColor);
-        backFloatIt.setColor(PublicVariable.primaryColor);
+        backSmart.setTint(PublicVariable.primaryColor);
+        backPref.setTint(PublicVariable.primaryColor);
+        backPrefAutoTrans.setTint(PublicVariable.primaryColor);
+        backFloatIt.setTint(PublicVariable.primaryColor);
         backPrefAutoTrans.setAlpha(functionsClass.readDefaultPreference("autoTrans", 255));
-        backSupport.setColor(PublicVariable.primaryColorOpposite);
+        backSupport.setTint(PublicVariable.primaryColorOpposite);
 
         stable.setIcon(drawPref);
         cache.setIcon(drawPref);
@@ -1113,14 +1112,14 @@ public class SettingGUILight extends PreferenceActivity implements OnSharedPrefe
         MenuItem gift = menu.findItem(R.id.donate);
 
         LayerDrawable drawOSP = (LayerDrawable) getDrawable(R.drawable.draw_facebook);
-        GradientDrawable backOSP = (GradientDrawable) drawOSP.findDrawableByLayerId(R.id.backtemp);
-        backOSP.setColor(PublicVariable.primaryColorOpposite);
+        Drawable backOSP = drawOSP.findDrawableByLayerId(R.id.backtemp);
+        backOSP.setTint(PublicVariable.primaryColorOpposite);
         facebook.setIcon(drawOSP);
 
         if (!functionsClass.alreadyDonated()) {
             LayerDrawable drawableDonate = (LayerDrawable) getDrawable(R.drawable.draw_gift);
-            GradientDrawable backgroundShare = (GradientDrawable) drawableDonate.findDrawableByLayerId(R.id.backtemp);
-            backgroundShare.setColor(PublicVariable.primaryColorOpposite);
+            Drawable backgroundShare = drawableDonate.findDrawableByLayerId(R.id.backtemp);
+            backgroundShare.setTint(PublicVariable.primaryColorOpposite);
             gift.setIcon(drawableDonate);
         } else {
             gift.setVisible(false);

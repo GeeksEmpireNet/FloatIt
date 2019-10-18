@@ -11,8 +11,8 @@ android {
         minSdkVersion 25
         targetSdkVersion 29
 
-        versionCode 681
-        versionName "[WearOS][Watch] ${majorVersion} | " + getDateMonth() + "." + getDateDay() + "." + getDateYear() + "{${versionCode}}" + "-"
+        versionCode 683
+        versionName "${majorVersion} | " + getDateMonth() + "." + getDateDay() + "." + getDateYear() + "{${versionCode}}" + "-"
     }
 
     buildTypes {
@@ -37,7 +37,7 @@ android {
         betaConfig {
             dimension "FloatingShortcutsFree"
 
-            versionNameSuffix 'FREE[BETA]'
+            versionNameSuffix 'FREE[WearOS][Watch][BETA]'
         }
     }
 
@@ -80,7 +80,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:17.2.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
-    implementation 'com.google.firebase:firebase-config:19.0.2'
+    implementation 'com.google.firebase:firebase-config:19.0.3'
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }
