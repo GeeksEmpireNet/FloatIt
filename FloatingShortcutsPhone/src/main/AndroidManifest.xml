@@ -243,7 +243,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Util.RemoteTask.RecoveryCategoryActivity"
+            android:name=".Util.RemoteTask.RecoveryFoldersActivity"
             android:exported="true"
             android:icon="@drawable/draw_widget_categories"
             android:excludeFromRecents="true"
@@ -383,7 +383,7 @@
             android:enabled="false"
             android:icon="@drawable/alias_categories_recovery"
             android:label="@string/recover_category"
-            android:targetActivity=".Util.RemoteTask.RecoveryCategoryActivity">
+            android:targetActivity=".Util.RemoteTask.RecoveryFoldersActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import net.geekstools.floatshort.PRO.R;
@@ -42,15 +43,21 @@ public class RecoveryAllActivity extends Activity {
                 setResult(RESULT_OK, intent);
             } else if (getIntent().getAction().equals(Intent.ACTION_MAIN) || getIntent().getAction().equals(Intent.ACTION_VIEW)
                     || getIntent().getAction().equals("Remote_Recover_All")) {
-                startActivity(new Intent(getApplicationContext(), RecoveryShortcutsActivity.class));
-                startActivity(new Intent(getApplicationContext(), RecoveryCategoryActivity.class));
-                startService(new Intent(getApplicationContext(), RecoveryWidgets.class));
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(new Intent(getApplicationContext(), RecoveryAll.class));
+                } else {
+                    startService(new Intent(getApplicationContext(), RecoveryAll.class));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            startActivity(new Intent(getApplicationContext(), RecoveryShortcutsActivity.class));
-            startActivity(new Intent(getApplicationContext(), RecoveryCategoryActivity.class));
-            startService(new Intent(getApplicationContext(), RecoveryWidgets.class));
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(new Intent(getApplicationContext(), RecoveryAll.class));
+            } else {
+                startService(new Intent(getApplicationContext(), RecoveryAll.class));
+            }
         }
 
         finish();
