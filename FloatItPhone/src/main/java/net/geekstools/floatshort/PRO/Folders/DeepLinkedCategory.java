@@ -1,4 +1,4 @@
-package net.geekstools.floatshort.PRO.Category;
+package net.geekstools.floatshort.PRO.Folders;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package net.geekstools.floatshort.PRO.Category;
+package net.geekstools.floatshort.PRO.Folders;
 
 import android.animation.Animator;
 import android.app.Activity;
@@ -75,7 +75,7 @@ import com.google.firebase.storage.UploadTask;
 import net.geekstools.floatshort.PRO.Automation.Categories.CategoryAutoFeatures;
 import net.geekstools.floatshort.PRO.BindServices;
 import net.geekstools.floatshort.PRO.BuildConfig;
-import net.geekstools.floatshort.PRO.Category.NavAdapter.CategoryListAdapter;
+import net.geekstools.floatshort.PRO.Folders.NavAdapter.CategoryListAdapter;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Shortcuts.HybridViewOff;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;

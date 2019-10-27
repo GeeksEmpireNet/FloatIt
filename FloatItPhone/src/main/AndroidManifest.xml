@@ -104,7 +104,7 @@
             android:supportsPictureInPicture="true"
             android:theme="@style/GeeksEmpire.Material" />
         <activity
-            android:name=".Category.FoldersHandler"
+            android:name=".Folders.FoldersHandler"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
             android:resizeableActivity="true"
@@ -122,7 +122,7 @@
             android:theme="@style/GeeksEmpire.Material"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".Category.AppSelectionList"
+            android:name=".Folders.AppSelectionList"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:resizeableActivity="true"
             android:screenOrientation="sensorPortrait"
@@ -176,7 +176,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Category.DeepLinkedCategory"
+            android:name=".Folders.DeepLinkedCategory"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter
                 android:autoVerify="true"
@@ -335,7 +335,7 @@
             android:enabled="false"
             android:icon="@drawable/alias_categories"
             android:label="@string/floatingCategory"
-            android:targetActivity=".Category.FoldersHandler">
+            android:targetActivity=".Folders.FoldersHandler">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

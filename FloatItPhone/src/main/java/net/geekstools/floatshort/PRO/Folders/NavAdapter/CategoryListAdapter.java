@@ -1,4 +1,4 @@
-package net.geekstools.floatshort.PRO.Category.NavAdapter;
+package net.geekstools.floatshort.PRO.Folders.NavAdapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import net.geekstools.floatshort.PRO.Category.AppSelectionList;
+import net.geekstools.floatshort.PRO.Folders.AppSelectionList;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
 import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;

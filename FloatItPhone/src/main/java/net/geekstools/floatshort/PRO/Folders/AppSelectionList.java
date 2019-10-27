@@ -1,4 +1,4 @@
-package net.geekstools.floatshort.PRO.Category;
+package net.geekstools.floatshort.PRO.Folders;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -36,8 +36,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
-import net.geekstools.floatshort.PRO.Category.NavAdapter.AppSavedListAdapter;
-import net.geekstools.floatshort.PRO.Category.NavAdapter.AppSelectionListAdapter;
+import net.geekstools.floatshort.PRO.Folders.NavAdapter.AppSavedListAdapter;
+import net.geekstools.floatshort.PRO.Folders.NavAdapter.AppSelectionListAdapter;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
 import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;

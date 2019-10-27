@@ -1,4 +1,4 @@
-package net.geekstools.floatshort.PRO.Category.NavAdapter;
+package net.geekstools.floatshort.PRO.Folders.NavAdapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,8 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import net.geekstools.floatshort.PRO.Category.FoldersHandler;
 import net.geekstools.floatshort.PRO.CheckPoint;
+import net.geekstools.floatshort.PRO.Folders.FoldersHandler;
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
 import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;
