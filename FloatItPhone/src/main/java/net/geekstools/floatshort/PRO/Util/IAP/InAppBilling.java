@@ -3,17 +3,17 @@ package net.geekstools.floatshort.PRO.Util.IAP;
 import android.os.Bundle;
 import android.os.Handler;
 
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import net.geekstools.floatshort.PRO.R;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
 import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;
+import net.geekstools.floatshort.PRO.Util.IAP.Util.PurchasesCheckpoint;
 import net.geekstools.floatshort.PRO.Util.IAP.billing.BillingManager;
 import net.geekstools.floatshort.PRO.Util.IAP.billing.BillingProvider;
 
-public class InAppBilling extends FragmentActivity implements BillingProvider {
+public class InAppBilling extends AppCompatActivity implements BillingProvider {
 
-    private static final String TAG = "InAppBilling";
     private static final String DIALOG_TAG = "InAppBillingDialogue";
 
     FunctionsClass functionsClass;
@@ -37,7 +37,8 @@ public class InAppBilling extends FragmentActivity implements BillingProvider {
             acquireFragment = (AcquireFragment) getFragmentManager().findFragmentByTag(DIALOG_TAG);
         }
 
-        billingManager = new BillingManager(InAppBilling.this, getIntent().hasExtra("UserEmailAddress") ? getIntent().getStringExtra("UserEmailAddress") : null);
+        billingManager = new BillingManager(InAppBilling.this,
+                getIntent().hasExtra("UserEmailAddress") ? getIntent().getStringExtra("UserEmailAddress") : null);
 
         new Handler().post(new Runnable() {
             @Override
@@ -50,8 +51,22 @@ public class InAppBilling extends FragmentActivity implements BillingProvider {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        new PurchasesCheckpoint(InAppBilling.this).trigger();
+    }
+
+    @Override
     public BillingManager getBillingManager() {
         return billingManager;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        finish();
     }
 
     public void proceedToPurchaseFragment() {
@@ -62,13 +77,6 @@ public class InAppBilling extends FragmentActivity implements BillingProvider {
         if (!isAcquireFragmentShown()) {
             acquireFragment.show(getFragmentManager(), DIALOG_TAG);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        finish();
     }
 
     public void showRefreshedUi() {

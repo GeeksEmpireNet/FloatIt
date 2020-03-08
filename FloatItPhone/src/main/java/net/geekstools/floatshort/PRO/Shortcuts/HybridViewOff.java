@@ -2,7 +2,6 @@ package net.geekstools.floatshort.PRO.Shortcuts;
 
 import android.animation.Animator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -39,19 +38,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ConsumeParams;
-import com.android.billingclient.api.ConsumeResponseListener;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
@@ -89,6 +81,7 @@ import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClass;
 import net.geekstools.floatshort.PRO.Util.Functions.FunctionsClassDebug;
 import net.geekstools.floatshort.PRO.Util.Functions.PublicVariable;
 import net.geekstools.floatshort.PRO.Util.IAP.InAppBilling;
+import net.geekstools.floatshort.PRO.Util.IAP.Util.PurchasesCheckpoint;
 import net.geekstools.floatshort.PRO.Util.LicenseValidator;
 import net.geekstools.floatshort.PRO.Util.NavAdapter.NavDrawerItem;
 import net.geekstools.floatshort.PRO.Util.NavAdapter.RecycleViewSmoothLayoutGrid;
@@ -111,7 +104,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public class HybridViewOff extends Activity implements View.OnClickListener, View.OnLongClickListener, View.OnTouchListener, SimpleGestureFilterSwitch.SimpleGestureListener {
+public class HybridViewOff extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, View.OnTouchListener, SimpleGestureFilterSwitch.SimpleGestureListener {
 
     FunctionsClass functionsClass;
 
@@ -636,101 +629,8 @@ public class HybridViewOff extends Activity implements View.OnClickListener, Vie
             }
         });
 
-        //Consume Donation
-        try {
-            if (functionsClass.alreadyDonated() && functionsClass.networkConnection()) {
-                BillingClient billingClient = BillingClient.newBuilder(HybridViewOff.this).setListener(new PurchasesUpdatedListener() {
-
-                    @Override
-                    public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> purchases) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-
-                        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-
-                        } else {
-
-                        }
-
-                    }
-                }).enablePendingPurchases().build();
-                billingClient.startConnection(new BillingClientStateListener() {
-                    @Override
-                    public void onBillingSetupFinished(BillingResult billingResult) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                            List<Purchase> purchases = billingClient.queryPurchases(BillingClient.SkuType.INAPP).getPurchasesList();
-                            for (Purchase purchase : purchases) {
-                                FunctionsClassDebug.Companion.PrintDebug("*** Purchased Item: " + purchase + " ***");
-
-
-                                if (purchase.getSku().equals("donation")) {
-                                    ConsumeResponseListener consumeResponseListener = new ConsumeResponseListener() {
-                                        @Override
-                                        public void onConsumeResponse(BillingResult billingResult, String outToken) {
-                                            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                                                FunctionsClassDebug.Companion.PrintDebug("*** Consumed Item: " + outToken + " ***");
-
-                                                functionsClass.savePreference(".PurchasedItem", purchase.getSku(), false);
-                                            }
-                                        }
-                                    };
-
-                                    ConsumeParams.Builder consumeParams = ConsumeParams.newBuilder();
-                                    consumeParams.setPurchaseToken(purchase.getPurchaseToken());
-                                    billingClient.consumeAsync(consumeParams.build(), consumeResponseListener);
-                                }
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onBillingServiceDisconnected() {
-
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //Restore Subscribed Item
-        try {
-            if (functionsClass.networkConnection()) {
-                BillingClient billingClient = BillingClient.newBuilder(HybridViewOff.this).setListener(new PurchasesUpdatedListener() {
-                    @Override
-                    public void onPurchasesUpdated(BillingResult billingResult, @Nullable List<Purchase> purchases) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-
-                        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-
-                        } else {
-
-                        }
-
-                    }
-                }).enablePendingPurchases().build();
-                billingClient.startConnection(new BillingClientStateListener() {
-                    @Override
-                    public void onBillingSetupFinished(BillingResult billingResult) {
-                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
-                            functionsClass.savePreference(".SubscribedItem", "remove.ads", false);
-
-                            List<Purchase> purchases = billingClient.queryPurchases(BillingClient.SkuType.SUBS).getPurchasesList();
-                            for (Purchase purchase : purchases) {
-                                FunctionsClassDebug.Companion.PrintDebug("*** Subscribed Item: " + purchase + " ***");
-                                functionsClass.savePreference(".SubscribedItem", purchase.getSku(), true);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onBillingServiceDisconnected() {
-
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        //In-App Billing
+        new PurchasesCheckpoint(HybridViewOff.this).trigger();
 
         firebaseAuth = FirebaseAuth.getInstance();
 
