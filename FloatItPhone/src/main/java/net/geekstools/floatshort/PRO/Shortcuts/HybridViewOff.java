@@ -745,8 +745,6 @@ public class HybridViewOff extends AppCompatActivity implements View.OnClickList
         ImageView shareIt = (ImageView) findViewById(R.id.share);
         if (functionsClass.LoadAds()) {
             LayerDrawable drawableShare = (LayerDrawable) getDrawable(R.drawable.draw_no_ads);
-            Drawable backgroundShare = drawableShare.findDrawableByLayerId(R.id.backtemp);
-            backgroundShare.setTint(PublicVariable.primaryColor);
             shareIt.setImageDrawable(drawableShare);
             shareIt.setOnClickListener(new View.OnClickListener() {
                 @Override

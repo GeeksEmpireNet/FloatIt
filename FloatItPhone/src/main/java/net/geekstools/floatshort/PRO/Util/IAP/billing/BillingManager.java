@@ -57,9 +57,9 @@ public class BillingManager implements PurchasesUpdatedListener {
     }
 
     public BillingResult startPurchaseFlow(SkuDetails skuDetails) {
+
         BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
                 .setSkuDetails(skuDetails)
-                .setAccountId(UserEmailAddress)
                 .build();
 
         return billingClient.launchBillingFlow(appCompatActivity, billingFlowParams);

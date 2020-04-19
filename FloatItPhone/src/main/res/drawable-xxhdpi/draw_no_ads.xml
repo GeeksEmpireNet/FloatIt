@@ -2,11 +2,11 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/backtemp">
         <shape android:shape="oval">
-            <solid android:color="@color/default_color" />
+            <solid android:color="@color/default_color_game_light" />
         </shape>
     </item>
 
     <item
         android:id="@+id/wPref"
-        android:drawable="@drawable/ic_no_ads"></item>
+        android:drawable="@drawable/ic_no_ads"/>
 </layer-list>
