@@ -102,6 +102,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.graphics.ColorUtils;
@@ -168,6 +169,7 @@ import net.geekstools.floatshort.PRO.Util.UI.CustomIconManager.LoadCustomIcons;
 import net.geekstools.floatshort.PRO.Util.UI.FloatingSplash;
 import net.geekstools.floatshort.PRO.Util.UI.PopupOptionsFloatingCategory;
 import net.geekstools.floatshort.PRO.Util.UI.PopupOptionsFloatingShortcuts;
+import net.geekstools.floatshort.PRO.Utils.InAppReview.InAppReviewProcess;
 import net.geekstools.floatshort.PRO.Widget.RoomDatabase.WidgetDataInterface;
 import net.geekstools.floatshort.PRO.Widget.WidgetConfigurations;
 import net.geekstools.floatshort.PRO.Widget_Unlimited_Floating;
@@ -2178,7 +2180,15 @@ public class FunctionsClass {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
 
+                    if (appVersionCode(activity.getPackageName()) > Integer.parseInt(readFile(".Updated"))) {
 
+                        if (!activity.isFinishing()) {
+
+                            new InAppReviewProcess((AppCompatActivity) activity).start();
+
+                        }
+
+                    }
 
                     saveFile(".Updated", String.valueOf(appVersionCode(context.getPackageName())));
 
