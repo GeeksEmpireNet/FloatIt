@@ -47,7 +47,7 @@ class FloatingWidgetHomeScreenShortcuts : Activity() {
                         }
                     })
                     .build()
-            val widgetDataModelsReallocation = widgetDataInterface.initDataAccessObject().loadWidgetByClassNameProviderWidget(packageName, providerClassName)
+            val widgetDataModelsReallocation = widgetDataInterface.initDataAccessObject().loadWidgetByClassNameProviderWidget(packageName!!, providerClassName!!)
             val appWidgetId = widgetDataModelsReallocation.WidgetId
 
             runOnUiThread {
